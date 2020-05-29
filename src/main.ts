@@ -43,16 +43,15 @@ function sketch( p:P5 ){
       /* hexagon radius */
       50,
       /* flat topped */
+      true,
+      /* debug ? */
       true
     )
   }
 
   p.draw = () => {
     p.background(30);
-    app.draw(
-      /* debug ? */
-      true
-    )
+    app.draw()
   }
 
   p.mousePressed = () => {

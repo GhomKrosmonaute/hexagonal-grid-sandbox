@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN"></script>
-    <title> Hexagon Sandbox </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title> Hexagon Sandbox </title>
 </head>
 <body>
-    <div id="p5"></div>
+  <div id="p5"></div>
+  <div class="options">
+    <label> debug mode: <input type="checkbox" id="debug" checked></label>
+    <label> flat topped: <input type="checkbox" id="flatTopped" checked></label>
+    <label> cols: <input type="number" id="cols" value="6"></label>
+    <label> rows: <input type="number" id="rows" value="5"></label>
+    <label> hexagon radius: <input type="number" id="hexagonRadius" value="50"></label>
+  </div>
 </body>
 </html>
