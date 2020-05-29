@@ -12,13 +12,13 @@ module.exports = {
     },
     
     output: {
-        filename: 'shooter.min.js',
+        filename: 'bundle.min.js',
         path: DESTINATION
     },
 
     plugins: [new HtmlWebpackPlugin({
         template: "index.html",
-        favicon: "Shooter/images/favicon.png"
+        favicon: "images/favicon.png"
     })],
 
     resolve: {
