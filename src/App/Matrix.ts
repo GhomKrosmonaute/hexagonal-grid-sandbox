@@ -26,8 +26,10 @@ export default class Matrix {
     }
   }
 
-  draw() {
+  draw( debug: boolean = false ) {
     for (const hexagon of this.hexagons)
-      hexagon.draw()
+      hexagon.draw(debug)
+    this.p.fill(255)
+    this.p.text(Math.round(this.p.frameRate()), 10, 10)
   }
 }

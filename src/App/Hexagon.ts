@@ -1,6 +1,6 @@
 import Matrix from "./Matrix"
 //@ts-ignore
-import * as p5 from "p5";
+import p5 from "p5";
 
 export default class Hexagon {
 
@@ -36,24 +36,29 @@ export default class Hexagon {
   }
 
   get dist(): p5.Vector {
+    const
+      width = this.width,
+      height = this.height
     return this.p.createVector(
-      this.flatTopped ? this.width * (3 / 4) : this.width,
-      this.flatTopped ? this.height : this.height * (3 / 4)
+      this.flatTopped ? width * (3 / 4) : width,
+      this.flatTopped ? height : height * (3 / 4)
     )
   }
 
   get x(): number {
+    const width = this.width
     return this.flatTopped ?
-      (this.width / 2 + this.gridPosition.x * this.dist.x) :
-      (this.gridPosition.x * this.width - this.width / 2) +
-      (this.gridPosition.y % 2 === 0 ? this.width / 2 : 0) + this.width
+      (width / 2 + this.gridPosition.x * this.dist.x) :
+      (this.gridPosition.x * width - width / 2) +
+      (this.gridPosition.y % 2 === 0 ? width / 2 : 0) + width
   }
 
   get y(): number {
+    const height = this.height
     return this.flatTopped ?
-      (this.gridPosition.y * this.height - this.height / 2) +
-      (this.gridPosition.x % 2 === 0 ? this.height / 2 : 0) + this.height :
-      (this.height / 2 + this.gridPosition.y * this.dist.y)
+      (this.gridPosition.y * height - height / 2) +
+      (this.gridPosition.x % 2 === 0 ? height / 2 : 0) + height :
+      (height / 2 + this.gridPosition.y * this.dist.y)
   }
 
   get screenPosition(): p5.Vector {
@@ -63,34 +68,46 @@ export default class Hexagon {
   getCornerPosition( i: number ) {
     const angle = this.p.radians(60 * i - (this.flatTopped ? 0 : 30))
     return this.p.createVector(
-      this.screenPosition.x + this.radius * this.p.cos(angle),
-      this.screenPosition.y + this.radius * this.p.sin(angle)
+      this.x + this.radius * this.p.cos(angle),
+      this.y + this.radius * this.p.sin(angle)
     )
   }
 
   draw( debug:boolean = false ) {
-    this.p.fill(100)
-    this.p.tint(230)
+    const
+      pos = this.screenPosition,
+      width = this.width,
+      height = this.height
 
     /* Mouse collision */
     const collision = this.p.dist(
-      this.screenPosition.x,this.screenPosition.y,
+      pos.x,pos.y,
       this.p.mouseX,this.p.mouseY
     ) < this.radius * 0.9
 
     if (!debug) {
       /* Draw image */
-      if(collision) this.p.tint(255)
-      this.p.image(this.image,
-        this.screenPosition.x - this.width * .5,
-        this.screenPosition.y - this.height * .5,
-        this.width, this.height
+      this.p.push()
+      this.p.translate(
+        pos.x - (width * 1.2) * .5,
+        pos.y - (height * 1.2) * .5
       )
+      if(!this.flatTopped)
+        this.p.rotate(this.p.radians(90))
+      if(collision) this.p.tint(255)
+      else this.p.tint(200)
+      this.p.image(this.image,
+        0, 0,
+        width * 1.2,
+        height * 1.2
+      )
+      this.p.pop()
     }
 
     else {
       /* Draw vectoriel hexagon */
       if(collision) this.p.fill(200)
+      else this.p.fill(150)
       this.p.beginShape()
       for (let i = 0; i < 6; i++){
         const corner = this.getCornerPosition(i)

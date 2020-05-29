@@ -2,7 +2,7 @@
 import './style.css'
 
 //@ts-ignore
-import p5 from 'p5'
+import P5 from 'p5'
 import Matrix from "./App/Matrix"
 
 //@ts-ignore
@@ -14,10 +14,10 @@ import yellow from "./images/nucleotide_jaune.png"
 //@ts-ignore
 import green from "./images/nucleotide_verte.png"
 
-function sketch( p:p5 ){
+function sketch( p:P5 ){
 
   let matrix:Matrix = null
-  let images:{[name:string]:p5.Image} = null
+  let images:{[name:string]:P5.Image} = null
 
   p.preload = () => {
     images = {
@@ -29,20 +29,36 @@ function sketch( p:p5 ){
   }
 
   p.setup = () => {
-    p.createCanvas(400,400)
-    p.frameRate(15)
-    matrix = new Matrix(p, images, 6, 6, 30, false)
+    for(const name in images)
+      images[name].resize(75,75)
+    p.createCanvas( 480, 480 )
+    matrix = new Matrix(
+      /* p5 instance */
+      p,
+      images,
+      /* nbr columns */
+      6,
+      /* nbr rows */
+      5,
+      /* hexagon radius */
+      50,
+      /* flat topped */
+      true
+    )
   }
 
-  p.draw = async () => {
+  p.draw = () => {
     p.background(30);
-    matrix.draw()
+    matrix.draw(
+      /* debug ? */
+      false
+    )
   }
 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new p5(sketch,document.getElementById('p5'))
+  new P5(sketch,document.getElementById('p5'))
 })
 
 
