@@ -1,14 +1,14 @@
 import Hexagon from "./Hexagon"
 //@ts-ignore
 import p5 from 'p5'
+import App from './App';
 
 export default class Matrix {
 
   public hexagons: Hexagon[] = []
 
   constructor(
-    public p:p5,
-    public images: {[name:string]:p5.Image},
+    public app: App,
     public colsCount: number,
     public rowsCount: number,
     public hexagonRadius: number,
@@ -26,10 +26,16 @@ export default class Matrix {
     }
   }
 
+  get p(): p5 {
+    return this.app.p
+  }
+
   draw( debug: boolean = false ) {
     for (const hexagon of this.hexagons)
       hexagon.draw(debug)
-    this.p.fill(255)
-    this.p.text(Math.round(this.p.frameRate()), 10, 10)
+    if(debug){
+      this.p.fill(255)
+      this.p.text(Math.round(this.p.frameRate()), 10, 10)
+    }
   }
 }

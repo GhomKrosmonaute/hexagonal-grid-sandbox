@@ -3,7 +3,7 @@ import './style.css'
 
 //@ts-ignore
 import P5 from 'p5'
-import Matrix from "./App/Matrix"
+import App from "./App/App"
 
 //@ts-ignore
 import blue from "./images/nucleotide_bleu.png"
@@ -16,7 +16,7 @@ import green from "./images/nucleotide_verte.png"
 
 function sketch( p:P5 ){
 
-  let matrix:Matrix = null
+  let app:App = null
   let images:{[name:string]:P5.Image} = null
 
   p.preload = () => {
@@ -32,7 +32,7 @@ function sketch( p:P5 ){
     for(const name in images)
       images[name].resize(75,75)
     p.createCanvas( 480, 480 )
-    matrix = new Matrix(
+    app = new App(
       /* p5 instance */
       p,
       images,
@@ -49,12 +49,19 @@ function sketch( p:P5 ){
 
   p.draw = () => {
     p.background(30);
-    matrix.draw(
+    app.draw(
       /* debug ? */
-      false
+      true
     )
   }
 
+  p.mousePressed = () => {
+    app.mousePressed()
+  }
+
+  p.mouseReleased = () => {
+    app.mouseReleased()
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
