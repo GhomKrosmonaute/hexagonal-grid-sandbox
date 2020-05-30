@@ -7,6 +7,7 @@ export default class App {
 
   public path: Path
   public matrix: Matrix
+  public logIndex: number = 0
 
   constructor(
     public p:p5,
@@ -14,6 +15,7 @@ export default class App {
     colsCount: number,
     rowsCount: number,
     hexagonRadius: number,
+    public pathMaxLength: number,
     flatTopped: boolean,
     public debug: boolean
   ) {
@@ -32,6 +34,20 @@ export default class App {
   getElementAs<T>( name: string ): T {
     //@ts-ignore
     return document.getElementById(name)
+  }
+
+  log( event: string, data: {[k:string]:any} ): App {
+    this.logIndex ++
+    const logs = document.getElementById("logs")
+    const log = document.createElement("div")
+    log.className = "log"
+    log.innerHTML = `<span class="index">[${this.logIndex}]</span><span class="event">${event}</span> ${Object.entries(data).map( entry => {
+      return `<span class="name">${entry[0].toUpperCase()}</span><span class="sign">=</span><span class="value">${entry[1]}</span>`
+    }).join(' ')}`
+    logs.appendChild(log)
+    if(logs.children.length > 20)
+      logs.children[0].remove()
+    return this
   }
 
   draw(){
@@ -62,6 +78,7 @@ export default class App {
     this.getElementAs<HTMLInputElement>("cols").value = String(this.matrix.colsCount)
     this.getElementAs<HTMLInputElement>("rows").value = String(this.matrix.rowsCount)
     this.getElementAs<HTMLInputElement>("hexagonRadius").value = String(this.matrix.hexagonRadius)
+    this.getElementAs<HTMLInputElement>("pathMaxLength").value = String(this.pathMaxLength)
 
     // listen form
     this.getElementAs<HTMLInputElement>("debug").onchange = (function (event:Event) {
@@ -90,6 +107,9 @@ export default class App {
     }).bind(this)
     this.getElementAs<HTMLInputElement>("hexagonRadius").onchange = (function (event:Event) {
       this.matrix.hexagonRadius = +(event.target as HTMLInputElement).value
+    }).bind(this)
+    this.getElementAs<HTMLInputElement>("pathMaxLength").onchange = (function (event:Event) {
+      this.pathMaxLength = +(event.target as HTMLInputElement).value
     }).bind(this)
   }
 }

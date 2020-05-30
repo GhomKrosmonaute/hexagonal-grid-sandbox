@@ -32,20 +32,21 @@ function sketch( p:P5 ){
     for(const name in images)
       images[name].resize(75,75)
     p.createCanvas( 480, 480 )
-    app = new App(
-      /* p5 instance */
-      p,
-      images,
+    app = new App(p,
+      /* images */
+        images,
       /* nbr columns */
-      6,
+        6,
       /* nbr rows */
-      5,
+        5,
       /* hexagon radius */
-      50,
+        50,
+      /* path max length */
+        9,
       /* flat topped */
-      true,
+        true,
       /* debug ? */
-      true
+        true
     )
   }
 

@@ -153,4 +153,11 @@ export default class Hexagon {
     }
 
   }
+
+  toString(): string {
+    return JSON.stringify({
+      x: this.gridPosition.x,
+      y: this.gridPosition.y
+    })
+  }
 }

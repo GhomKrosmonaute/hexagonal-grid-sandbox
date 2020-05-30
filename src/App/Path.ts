@@ -5,9 +5,7 @@ import Hexagon from './Hexagon';
 
 export default class Path {
 
-  public startAt: number = Date.now()
   public hexagons: Hexagon[] = []
-  public maxLength: number = 6
 
   constructor(
     public app: App,
@@ -18,6 +16,10 @@ export default class Path {
 
   get p(): p5 {
     return this.app.p
+  }
+
+  get maxLength(): number {
+    return this.app.pathMaxLength
   }
 
   update(hexagon: Hexagon): void {
@@ -41,6 +43,7 @@ export default class Path {
     if(debug || true){
       let last: Hexagon = null
       for(const hexagon of this.hexagons){
+        this.p.noStroke()
         this.p.fill(255,0,0)
         this.p.ellipse(
           hexagon.x,
@@ -64,7 +67,10 @@ export default class Path {
   }
 
   crunch(){
-    alert(this.hexagons.length)
+    this.app.log("Crunched Path", {
+      length: this.hexagons.length,
+      start: this.hexagons[0].toString()
+    })
   }
 
 }

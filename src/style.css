@@ -31,3 +31,37 @@ canvas {
 input {
   padding: 10px;
 }
+
+.logs {
+  padding: 5px;
+  max-width: 30vw;
+}
+
+.log {
+  padding: 2px 5px;
+}
+
+.log:last-child,
+.log:hover {
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #FFFFFF;
+  background-color: #151515;
+}
+
+.log .index {
+  padding: 5px;
+  color: chocolate;
+}
+
+.log .event,
+.log .sign {
+  color: #444;
+}
+
+.log .name {
+
+}
+
+.log .value {
+  color: darkgrey;
+}
