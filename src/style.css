@@ -5,10 +5,13 @@
   box-sizing: border-box;
 }
 
+ul, ol, li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: sans-serif;
   background-color: #000;
   color: #FFF;
@@ -17,32 +20,82 @@ body {
 
 canvas {
   display: block;
+  position: fixed;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
 }
 
 .options {
+  background: linear-gradient(270deg, rgba(255,255,255,0) 26%, rgba(0,0,0,0.5) 100%);
+  position: fixed;
+  z-index: 3;
+  right: 0;
+  top: 0;
+  width: auto;
+  height: 100vh;
   font-size: 20px;
   display: flex;
   flex-direction: column;
-  min-height: 60vh;
-  justify-content: space-around;
-  padding: 20px;
+  justify-content: center;
+}
+
+#logs {
+  background: linear-gradient(270deg, rgba(0,0,0,0.5) 0%, rgba(255,255,255,0) 67%);
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: auto;
+  height: 100vh;
+  padding: 5px;
+  pointer-events: none;
+}
+
+#logs li {
+  padding-left: 30px;
+}
+
+label {
+  padding: 8px;
+  width: auto;
 }
 
 input {
-  padding: 10px;
+  overflow: visible;
+  font-size: 21px;
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  color: #d2691e;
 }
 
-.logs {
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  width: 50px;
+}
+
+[type=checkbox]:not(:checked),
+[type=checkbox]:checked {
   padding: 5px;
-  max-width: 30vw;
 }
 
 .log {
-  padding: 2px 5px;
+  padding: 5px;
 }
 
-.log:last-child,
-.log:hover {
+.log:last-child {
   border-left: 2px solid #FFFFFF;
   border-right: 2px solid #FFFFFF;
   background-color: #151515;
@@ -53,15 +106,18 @@ input {
   color: chocolate;
 }
 
-.log .event,
+.log .event {
+  color: darkgrey;
+}
+
 .log .sign {
   color: #444;
 }
 
 .log .name {
-
+  color: darkgrey;
 }
 
 .log .value {
-  color: darkgrey;
+  color: chocolate;
 }

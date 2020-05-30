@@ -41,9 +41,9 @@ export default class App {
     const logs = document.getElementById("logs")
     const log = document.createElement("div")
     log.className = "log"
-    log.innerHTML = `<span class="index">[${this.logIndex}]</span><span class="event">${event}</span> ${Object.entries(data).map( entry => {
-      return `<span class="name">${entry[0].toUpperCase()}</span><span class="sign">=</span><span class="value">${entry[1]}</span>`
-    }).join(' ')}`
+    log.innerHTML = `<span class="index">[${this.logIndex}]</span><span class="event">${event}</span> <ul>${Object.entries(data).map( entry => {
+      return `<li><span class="name">${entry[0]}</span><span class="sign">=</span><span class="value">${entry[1]}</span></li>`
+    }).join(' ')}</ul>`
     logs.appendChild(log)
     if(logs.children.length > 20)
       logs.children[0].remove()
@@ -83,6 +83,7 @@ export default class App {
     // listen form
     this.getElementAs<HTMLInputElement>("debug").onchange = (function (event:Event) {
       this.debug = (event.target as HTMLInputElement).checked
+      document.getElementById("logs").style.display = this.debug ? "flex" : "none"
     }).bind(this)
     this.getElementAs<HTMLInputElement>("flatTopped").onchange = (function (event:Event) {
       this.matrix.flatTopped = (event.target as HTMLInputElement).checked
