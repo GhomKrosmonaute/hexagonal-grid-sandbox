@@ -53,7 +53,8 @@ function sketch( p:P5 ){
   }
 
   p.draw = () => {
-    p.background(30);
+    p.background(30)
+    app.update()
     app.draw()
   }
 

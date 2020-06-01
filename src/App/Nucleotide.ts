@@ -82,7 +82,7 @@ export default class Nucleotide {
     ) < this.radius * 0.9
   }
 
-  touchSideOf( nucleotide: Nucleotide ): boolean {
+  isNeighborOf(nucleotide: Nucleotide ): boolean {
     const
       x1 = this.gridPosition.x,
       y1 = this.gridPosition.y,
@@ -105,7 +105,7 @@ export default class Nucleotide {
     )
   }
 
-  getCornerPosition( i: number ) {
+  getCornerPosition( i: number ): p5.Vector {
     const angle = this.p.radians(60 * i - (this.flatTopped ? 0 : 30))
     return this.p.createVector(
       this.x + this.radius * this.p.cos(angle),
@@ -113,7 +113,30 @@ export default class Nucleotide {
     )
   }
 
+  /** from 0 to 5, start on top */
+  getNeighborPosition( i: number ): p5.Vector {
+    switch (i) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+    }
+  }
+
+  update() {
+    /* Mouse collision */
+    const hovered = this.hovered()
+
+    /* Path update */
+    if(hovered && this.matrix.app.path)
+      this.matrix.app.path.update(this)
+  }
+
   draw( debug:boolean = false ) {
+    if(this.isWall) return
+
     const
       pos = this.screenPosition,
       width = this.width,
@@ -121,10 +144,6 @@ export default class Nucleotide {
 
     /* Mouse collision */
     const hovered = this.hovered()
-
-    /* Path update */
-    if(hovered && this.matrix.app.path)
-      this.matrix.app.path.update(this)
 
     if (!debug) {
       /* Draw image */
@@ -159,6 +178,14 @@ export default class Nucleotide {
         this.p.vertex(corner.x,corner.y)
       }
       this.p.endShape(this.p.CLOSE)
+      this.p.stroke(0)
+      this.p.strokeWeight(10)
+      this.p.fill(255)
+      this.p.textSize(this.height * .15)
+      this.p.textAlign(this.p.CENTER)
+      this.p.text(`x${this.gridPosition.x} y${this.gridPosition.y}`,
+        this.x, this.y + this.height * .41
+      )
     }
 
   }

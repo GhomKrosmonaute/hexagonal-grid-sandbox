@@ -2,6 +2,7 @@
 import p5 from "p5";
 import Matrix from './Matrix';
 import Path from './Path';
+import Nucleotide from './Nucleotide';
 
 export default class App {
 
@@ -30,6 +31,10 @@ export default class App {
     this.linkDynamicOptions()
   }
 
+  get hovered(): Nucleotide | null {
+    return this.matrix.nucleotides
+      .find( nucleotide => nucleotide.hovered() )
+  }
 
   getInput( name: string ): HTMLInputElement {
     return document.getElementById(name) as HTMLInputElement
@@ -51,6 +56,10 @@ export default class App {
     return this
   }
 
+  update(){
+    this.matrix.update()
+  }
+
   draw(){
     this.matrix.draw(this.debug)
     if(this.path){
@@ -59,18 +68,24 @@ export default class App {
   }
 
   mousePressed(){
-    for(const nucleotide of this.matrix.nucleotides){
-      if(nucleotide.hovered()){
-        this.path = new Path(this,nucleotide)
-        break
-      }
+    const hovered = this.hovered
+    if(this.p.mouseButton === this.p.LEFT) {
+      if(hovered && !hovered.isWall) this.path = new Path(this, hovered)
+    }else{
+      if(hovered) hovered.isWall = true
+      this.log("Hole/Wall placed", {
+        position: hovered.toString()
+      })
     }
   }
 
   mouseReleased(){
-    if(this.path){
-      this.path.crunch()
-      this.path = null
+    if(this.p.mouseButton === this.p.LEFT){
+      if(this.path){
+        if(!this.path.slider) this.path.crunch()
+        else this.path.slide()
+        this.path = null
+      }
     }
   }
 

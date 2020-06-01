@@ -30,6 +30,11 @@ export default class Matrix {
     return this.app.p
   }
 
+  update() {
+    for (const nucleotide of this.nucleotides)
+      nucleotide.update()
+  }
+
   draw( debug: boolean = false ) {
     for (const nucleotide of this.nucleotides)
       nucleotide.draw(debug)
