@@ -21,16 +21,18 @@ function sketch( p:P5 ){
 
   p.preload = () => {
     images = {
-      blue: p.loadImage(blue),
-      red: p.loadImage(red),
-      yellow: p.loadImage(yellow),
-      green: p.loadImage(green),
+      nucleotides: {
+        blue: p.loadImage(blue),
+        red: p.loadImage(red),
+        yellow: p.loadImage(yellow),
+        green: p.loadImage(green)
+      }
     }
   }
 
   p.setup = () => {
-    for(const name in images)
-      images[name].resize(75,75)
+    for(const name in images.nucleotides)
+      images.nucleotides[name].resize( 75, 75 )
     p.createCanvas( 480, 480 )
     app = new App(p,
       /* images */
@@ -39,7 +41,7 @@ function sketch( p:P5 ){
         6,
       /* nbr rows */
         5,
-      /* hexagon radius */
+      /* nucleotides radius */
         50,
       /* path max length */
         9,

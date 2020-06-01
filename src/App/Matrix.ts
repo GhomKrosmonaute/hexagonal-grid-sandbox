@@ -1,23 +1,23 @@
-import Hexagon from "./Hexagon"
+import Nucleotide from "./Nucleotide"
 //@ts-ignore
 import p5 from 'p5'
 import App from './App';
 
 export default class Matrix {
 
-  public hexagons: Hexagon[] = []
+  public nucleotides: Nucleotide[] = []
 
   constructor(
     public app: App,
     public colsCount: number,
     public rowsCount: number,
-    public hexagonRadius: number,
+    public nucleotideRadius: number,
     public flatTopped: boolean
   ) {
     for (let x = 0; x < colsCount; x++) {
       for (let y = 0; y < rowsCount; y++) {
-        this.hexagons.push(
-          new Hexagon(
+        this.nucleotides.push(
+          new Nucleotide(
             this,
             this.p.createVector(x, y)
           )
@@ -31,8 +31,8 @@ export default class Matrix {
   }
 
   draw( debug: boolean = false ) {
-    for (const hexagon of this.hexagons)
-      hexagon.draw(debug)
+    for (const nucleotide of this.nucleotides)
+      nucleotide.draw(debug)
     if(debug){
       this.p.fill(255)
       this.p.text(Math.round(this.p.frameRate()), 10, 10)

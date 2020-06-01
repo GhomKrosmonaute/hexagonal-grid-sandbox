@@ -2,18 +2,26 @@ import Matrix from "./Matrix"
 //@ts-ignore
 import p5 from "p5";
 
-export default class Hexagon {
+export default class Nucleotide {
 
-  public image:p5.Image
+  public image: p5.Image
+  public color: p5.Color
+  public colorName: string
   public isWall: boolean = false
 
   constructor(
     public matrix:Matrix,
     public gridPosition:p5.Vector
   ) {
-    this.image = Object.values(matrix.app.images)[
-      Math.floor(Math.random() * Object.keys(matrix.app.images).length)
-    ]
+    const colors = Object.keys(matrix.app.images.nucleotides)
+    this.colorName = colors[Math.floor(Math.random()*colors.length)]
+    this.image = matrix.app.images.nucleotides[this.colorName]
+    switch (this.colorName) {
+      case 'blue': this.color = this.p.color(0,0,255); break
+      case 'red': this.color = this.p.color(255,0,0); break
+      case 'yellow': this.color = this.p.color(255,255,0); break
+      case 'green': this.color = this.p.color(0,255,0); break
+    }
   }
 
   get p(): p5 {
@@ -25,7 +33,7 @@ export default class Hexagon {
   }
 
   get radius(): number {
-    return this.matrix.hexagonRadius
+    return this.matrix.nucleotideRadius
   }
 
   get width(): number {
@@ -74,12 +82,12 @@ export default class Hexagon {
     ) < this.radius * 0.9
   }
 
-  touchSideOf( hexagon: Hexagon ): boolean {
+  touchSideOf( nucleotide: Nucleotide ): boolean {
     const
       x1 = this.gridPosition.x,
       y1 = this.gridPosition.y,
-      x2 = hexagon.gridPosition.x,
-      y2 = hexagon.gridPosition.y
+      x2 = nucleotide.gridPosition.x,
+      y2 = nucleotide.gridPosition.y
     return this.gridPosition.x % 2 === 0 ? (
       (x2 === x1 - 1 && y2 === y1) ||
       (x2 === x1 + 1 && y2 === y1) ||
@@ -139,9 +147,10 @@ export default class Hexagon {
     }
 
     else {
-      /* Draw vectoriel hexagon */
-      if(hovered) this.p.fill(200)
-      else this.p.fill(150)
+      /* Draw vectoriel nucleotide */
+      if(hovered) this.color.setAlpha(255)
+      else this.color.setAlpha(160)
+      this.p.fill(this.color)
       this.p.stroke(10)
       this.p.strokeWeight(1)
       this.p.beginShape()

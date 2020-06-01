@@ -1,17 +1,17 @@
 //@ts-ignore
 import p5 from "p5";
 import App from './App';
-import Hexagon from './Hexagon';
+import Nucleotide from './Nucleotide';
 
 export default class Path {
 
-  public hexagons: Hexagon[] = []
+  public nucleotides: Nucleotide[] = []
 
   constructor(
     public app: App,
-    start: Hexagon
+    start: Nucleotide
   ) {
-    this.hexagons.push(start)
+    this.nucleotides.push(start)
   }
 
   get p(): p5 {
@@ -22,33 +22,33 @@ export default class Path {
     return this.app.pathMaxLength
   }
 
-  update(hexagon: Hexagon): void {
+  update(nucleotide: Nucleotide): void {
     if(
-      this.hexagons[this.hexagons.length-2] &&
-      this.hexagons[this.hexagons.length-2] === hexagon
+      this.nucleotides[this.nucleotides.length-2] &&
+      this.nucleotides[this.nucleotides.length-2] === nucleotide
     ) {
-      this.hexagons.pop()
+      this.nucleotides.pop()
       return
     }
-    if(this.hexagons.length >= this.maxLength) return
-    if(hexagon.isWall || this.hexagons.includes(hexagon)) return
+    if(this.nucleotides.length >= this.maxLength) return
+    if(nucleotide.isWall || this.nucleotides.includes(nucleotide)) return
     if(
-      this.hexagons[this.hexagons.length-1] &&
-      !this.hexagons[this.hexagons.length-1].touchSideOf(hexagon)
+      this.nucleotides[this.nucleotides.length-1] &&
+      !this.nucleotides[this.nucleotides.length-1].touchSideOf(nucleotide)
     ) return null
-    this.hexagons.push(hexagon)
+    this.nucleotides.push(nucleotide)
   }
 
   draw( debug:boolean = false ){
     if(debug || true){
-      let last: Hexagon = null
-      for(const hexagon of this.hexagons){
+      let last: Nucleotide = null
+      for(const nucleotide of this.nucleotides){
         this.p.noStroke()
         this.p.fill(255,0,0)
         this.p.ellipse(
-          hexagon.x,
-          hexagon.y,
-          hexagon.width * .5
+          nucleotide.x,
+          nucleotide.y,
+          nucleotide.width * .5
         )
         if(last){
           this.p.strokeWeight(3)
@@ -56,11 +56,11 @@ export default class Path {
           this.p.line(
             last.x,
             last.y,
-            hexagon.x,
-            hexagon.y
+            nucleotide.x,
+            nucleotide.y
           )
         }
-        last = hexagon
+        last = nucleotide
       }
     }
 
@@ -68,8 +68,8 @@ export default class Path {
 
   crunch(){
     this.app.log("Crunched Path", {
-      length: this.hexagons.length,
-      start: this.hexagons[0].toString()
+      length: this.nucleotides.length,
+      start: this.nucleotides[0].toString()
     })
   }
 

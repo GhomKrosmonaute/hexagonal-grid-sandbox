@@ -11,10 +11,10 @@ export default class App {
 
   constructor(
     public p:p5,
-    public images: {[name:string]:p5.Image},
+    public images: any,
     colsCount: number,
     rowsCount: number,
-    hexagonRadius: number,
+    nucleotideRadius: number,
     public pathMaxLength: number,
     flatTopped: boolean,
     public debug: boolean
@@ -23,7 +23,7 @@ export default class App {
       this,
       colsCount,
       rowsCount,
-      hexagonRadius,
+      nucleotideRadius,
       flatTopped
     )
 
@@ -31,12 +31,11 @@ export default class App {
   }
 
 
-  getElementAs<T>( name: string ): T {
-    //@ts-ignore
-    return document.getElementById(name)
+  getInput( name: string ): HTMLInputElement {
+    return document.getElementById(name) as HTMLInputElement
   }
 
-  log( event: string, data: {[k:string]:any} ): App {
+  log( event: string, data: {[k:string]:string|number|boolean} ): App {
     this.logIndex ++
     const logs = document.getElementById("logs")
     const log = document.createElement("div")
@@ -45,8 +44,10 @@ export default class App {
       return `<li><span class="name">${entry[0]}</span><span class="sign">=</span><span class="value">${entry[1]}</span></li>`
     }).join(' ')}</ul>`
     logs.appendChild(log)
-    if(logs.children.length > 20)
-      logs.children[0].remove()
+    if(
+      logs.getBoundingClientRect().height >
+      document.body.getBoundingClientRect().height
+    ) logs.children[0].remove()
     return this
   }
 
@@ -58,58 +59,60 @@ export default class App {
   }
 
   mousePressed(){
-    for(const hexagon of this.matrix.hexagons){
-      if(hexagon.hovered()){
-        this.path = new Path(this,hexagon)
+    for(const nucleotide of this.matrix.nucleotides){
+      if(nucleotide.hovered()){
+        this.path = new Path(this,nucleotide)
         break
       }
     }
   }
 
   mouseReleased(){
-    this.path.crunch()
-    this.path = null
+    if(this.path){
+      this.path.crunch()
+      this.path = null
+    }
   }
 
   linkDynamicOptions(){
     // setup options values in form
-    this.getElementAs<HTMLInputElement>("debug").checked = this.debug
-    this.getElementAs<HTMLInputElement>("flatTopped").checked = this.matrix.flatTopped
-    this.getElementAs<HTMLInputElement>("cols").value = String(this.matrix.colsCount)
-    this.getElementAs<HTMLInputElement>("rows").value = String(this.matrix.rowsCount)
-    this.getElementAs<HTMLInputElement>("hexagonRadius").value = String(this.matrix.hexagonRadius)
-    this.getElementAs<HTMLInputElement>("pathMaxLength").value = String(this.pathMaxLength)
+    this.getInput("debug").checked = this.debug
+    this.getInput("flatTopped").checked = this.matrix.flatTopped
+    this.getInput("cols").value = String(this.matrix.colsCount)
+    this.getInput("rows").value = String(this.matrix.rowsCount)
+    this.getInput("nucleotideRadius").value = String(this.matrix.nucleotideRadius)
+    this.getInput("pathMaxLength").value = String(this.pathMaxLength)
 
     // listen form
-    this.getElementAs<HTMLInputElement>("debug").onchange = (function (event:Event) {
+    this.getInput("debug").onchange = (function (event:Event) {
       this.debug = (event.target as HTMLInputElement).checked
       document.getElementById("logs").style.display = this.debug ? "flex" : "none"
     }).bind(this)
-    this.getElementAs<HTMLInputElement>("flatTopped").onchange = (function (event:Event) {
+    this.getInput("flatTopped").onchange = (function (event:Event) {
       this.matrix.flatTopped = (event.target as HTMLInputElement).checked
     }).bind(this)
-    this.getElementAs<HTMLInputElement>("cols").onchange = (function (event:Event) {
+    this.getInput("cols").onchange = (function (event:Event) {
       this.matrix = new Matrix(
         this,
         +(event.target as HTMLInputElement).value,
         this.matrix.rowsCount,
-        this.matrix.hexagonRadius,
+        this.matrix.nucleotideRadius,
         this.matrix.flatTopped
       )
     }).bind(this)
-    this.getElementAs<HTMLInputElement>("rows").onchange = (function (event:Event) {
+    this.getInput("rows").onchange = (function (event:Event) {
       this.matrix = new Matrix(
         this,
         this.matrix.colsCount,
         +(event.target as HTMLInputElement).value,
-        this.matrix.hexagonRadius,
+        this.matrix.nucleotideRadius,
         this.matrix.flatTopped
       )
     }).bind(this)
-    this.getElementAs<HTMLInputElement>("hexagonRadius").onchange = (function (event:Event) {
-      this.matrix.hexagonRadius = +(event.target as HTMLInputElement).value
+    this.getInput("nucleotideRadius").onchange = (function (event:Event) {
+      this.matrix.nucleotideRadius = +(event.target as HTMLInputElement).value
     }).bind(this)
-    this.getElementAs<HTMLInputElement>("pathMaxLength").onchange = (function (event:Event) {
+    this.getInput("pathMaxLength").onchange = (function (event:Event) {
       this.pathMaxLength = +(event.target as HTMLInputElement).value
     }).bind(this)
   }
