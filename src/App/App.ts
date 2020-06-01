@@ -72,7 +72,8 @@ export default class App {
   mousePressed(){
     const hovered = this.hovered
     if(this.p.mouseButton === this.p.LEFT) {
-      if(hovered && !hovered.isWall) this.path = new Path(this, hovered, this.pathList)
+      if(hovered && !hovered.isWall)
+        this.path = new Path(this, hovered)
     }else{
       if(hovered) hovered.isWall = true
       this.log("Hole/Wall placed", {
@@ -84,8 +85,9 @@ export default class App {
   mouseReleased(){
     if(this.p.mouseButton === this.p.LEFT){
       if(this.path){
-        if(this.state !== "slide") this.path.crunch()
-        else this.path.slide()
+        if(this.state === "slide")
+          this.path.slide()
+        else this.path.crunch()
         this.path = null
       }
     }
