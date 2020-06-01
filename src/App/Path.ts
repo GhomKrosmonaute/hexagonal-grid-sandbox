@@ -6,11 +6,12 @@ import Nucleotide from './Nucleotide';
 export default class Path {
 
   public nucleotides: Nucleotide[] = []
-  public slider: boolean = false
+  //public slider: boolean = false
 
   constructor(
     public app: App,
-    start: Nucleotide
+    start: Nucleotide,
+    public others: Path[]
   ) {
     this.nucleotides.push(start)
   }
@@ -24,29 +25,51 @@ export default class Path {
   }
 
   update(nucleotide: Nucleotide): void {
-    if(
-      this.nucleotides.length === 1 &&
-      nucleotide.isWall
-    ) {
-      this.slider = true
-    }else if(
-      this.nucleotides.length > 1 &&
-      nucleotide.isWall
-    ) return
-    if(
-      this.nucleotides[this.nucleotides.length-2] &&
-      this.nucleotides[this.nucleotides.length-2] === nucleotide
-    ) {
-      this.nucleotides.pop()
-      return
-    }else if(this.nucleotides[this.nucleotides.length-1].isWall)
-      return
-    if(this.nucleotides.length >= this.maxLength) return
-    if(this.nucleotides.includes(nucleotide)) return
-    if(
-      this.nucleotides[this.nucleotides.length-1] &&
-      !this.nucleotides[this.nucleotides.length-1].isNeighborOf(nucleotide)
-    ) return null
+    // if(
+    //   this.nucleotides.length === 1 &&
+    //   nucleotide.isWall
+    // ) {
+    //   this.slider = true
+    // }else if(
+    //   this.nucleotides.length > 1 &&
+    //   nucleotide.isWall
+    // ) return
+    if(this.app.state === "crunch"){
+      if(nucleotide.isWall) return
+      if(
+        this.nucleotides[this.nucleotides.length-2] &&
+        this.nucleotides[this.nucleotides.length-2] === nucleotide
+      ) {
+        this.nucleotides.pop()
+        return
+      }
+      if(this.nucleotides.length >= this.maxLength) return
+      if(this.nucleotides.includes(nucleotide)) return
+      if(
+        this.nucleotides[this.nucleotides.length-1] &&
+        !this.nucleotides[this.nucleotides.length-1].isNeighborOf(nucleotide)
+      ) return null
+
+    }else if(this.app.state === "slide"){
+      if(
+        this.nucleotides[this.nucleotides.length-1] &&
+        this.nucleotides[this.nucleotides.length-1].isWall
+      ) return
+      if(
+        this.nucleotides[this.nucleotides.length-2] &&
+        this.nucleotides[this.nucleotides.length-2] === nucleotide
+      ) {
+        this.nucleotides.pop()
+        return
+      }
+      if(this.nucleotides.length > 1) return
+      if(this.nucleotides.includes(nucleotide)) return
+      if(
+        this.nucleotides[this.nucleotides.length-1] &&
+        !this.nucleotides[this.nucleotides.length-1].isNeighborOf(nucleotide)
+      ) return null
+    }
+
     this.nucleotides.push(nucleotide)
   }
 

@@ -9,6 +9,8 @@ export default class App {
   public path: Path
   public matrix: Matrix
   public logIndex: number = 0
+  public state: "crunch" | "slide" = "crunch"
+  public pathList: Path[] = []
 
   constructor(
     public p:p5,
@@ -70,7 +72,7 @@ export default class App {
   mousePressed(){
     const hovered = this.hovered
     if(this.p.mouseButton === this.p.LEFT) {
-      if(hovered && !hovered.isWall) this.path = new Path(this, hovered)
+      if(hovered && !hovered.isWall) this.path = new Path(this, hovered, this.pathList)
     }else{
       if(hovered) hovered.isWall = true
       this.log("Hole/Wall placed", {
@@ -82,7 +84,7 @@ export default class App {
   mouseReleased(){
     if(this.p.mouseButton === this.p.LEFT){
       if(this.path){
-        if(!this.path.slider) this.path.crunch()
+        if(this.state !== "slide") this.path.crunch()
         else this.path.slide()
         this.path = null
       }
@@ -97,6 +99,7 @@ export default class App {
     this.getInput("rows").value = String(this.matrix.rowsCount)
     this.getInput("nucleotideRadius").value = String(this.matrix.nucleotideRadius)
     this.getInput("pathMaxLength").value = String(this.pathMaxLength)
+    this.getInput(this.state).checked = true
 
     // listen form
     this.getInput("debug").onchange = (function (event:Event) {
@@ -130,5 +133,10 @@ export default class App {
     this.getInput("pathMaxLength").onchange = (function (event:Event) {
       this.pathMaxLength = +(event.target as HTMLInputElement).value
     }).bind(this)
+    const stateListener = (function(event:Event){
+      this.state = this.getInput("crunch").checked ? "crunch" : "slide"
+    }).bind(this)
+    this.getInput("crunch").onchange = stateListener
+    this.getInput("slide").onchange = stateListener
   }
 }
