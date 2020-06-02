@@ -10,8 +10,8 @@ export default class Nucleotide {
   public isWall: boolean = false
 
   constructor(
-    public matrix:Matrix,
-    public matrixPosition:p5.Vector
+    public matrix: Matrix,
+    public matrixPosition: p5.Vector
   ) {
     const colors = Object.keys(matrix.app.images.nucleotides)
     this.colorName = colors[Math.floor(Math.random()*colors.length)]
@@ -72,7 +72,7 @@ export default class Nucleotide {
     const neighbor = this.getNeighbor(neighborIndex)
 
     // get the opposed neighbor
-    let opposedNeighborIndex =  neighborIndex - 3
+    let opposedNeighborIndex = neighborIndex - 3
     if(opposedNeighborIndex < 0) opposedNeighborIndex += 6
     const opposedNeighbor = this.getNeighbor(opposedNeighborIndex)
 

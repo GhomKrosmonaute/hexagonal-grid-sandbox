@@ -17,7 +17,7 @@ import green from "./images/nucleotide_verte.png"
 function sketch( p:P5 ){
 
   let app:App = null
-  let images:{[name:string]:P5.Image} = null
+  let images:{[folder:string]:{[name:string]:P5.Image}} = null
 
   p.preload = () => {
     images = {
