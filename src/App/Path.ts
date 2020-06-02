@@ -39,24 +39,10 @@ export default class Path {
     //   nucleotide.isWall
     // ) return
 
-    // check if nucleotide is already in this path
-    if(this.nucleotides.includes(nucleotide)) return
-
     // in crunch path case
     if(this.app.state === "crunch"){
-
       // check if the current nucleotide is a wall/hole
       if(nucleotide.isWall) return
-
-      // check if this path is terminated or not
-      if(this.nucleotides.length >= this.maxLength) return
-
-    // in slide path case
-    }else{
-
-      // set max length of slide path to 2
-      if(this.nucleotides.length > 1) return
-
     }
 
     // check the cancellation & cancel to previous nucleotide
@@ -68,10 +54,18 @@ export default class Path {
       return
     }
 
+    // check if this path is terminated or not
+    if(this.nucleotides.length >= (
+      this.app.state === "crunch" ? this.maxLength : 2
+    )) return
+
+    // check if nucleotide is already in this path
+    if(this.nucleotides.includes(nucleotide)) return
+
     // check if the current nucleotide is a neighbor of the last checked nucleotide
     if(
       this.nucleotides[this.nucleotides.length-1] &&
-      !this.nucleotides[this.nucleotides.length-1].isNeighborOf(nucleotide)
+      this.nucleotides[this.nucleotides.length-1].getNeighborIndex(nucleotide) === -1
     ) return null
 
     // push in this path the checked nucleotide
@@ -81,7 +75,11 @@ export default class Path {
   draw( debug:boolean = false ){
     if(debug || true){
       let last: Nucleotide = null
+
+      // for all nucleotide in path
       for(const nucleotide of this.nucleotides){
+
+        // draw ellipse
         this.p.noStroke()
         this.p.fill(255)
         this.p.ellipse(
@@ -90,6 +88,8 @@ export default class Path {
           nucleotide.width * .5
         )
         if(last){
+
+          // draw line
           this.p.strokeWeight(3)
           this.p.stroke(255)
           this.p.line(
@@ -108,14 +108,17 @@ export default class Path {
   crunch(){
     this.app.log("Crunched Path", {
       length: this.nucleotides.length,
-      start: this.nucleotides[0].toString()
+      // @ts-ignore
+      ...Object.fromEntries(this.nucleotides.map((n,i) => {
+        return [String(i),n.toString()]
+      }))
     })
   }
 
   slide(){
     this.app.log("Slided Path", {
-      start: this.nucleotides[0].toString(),
-      stop: this.nucleotides[1].toString()
+      from: this.nucleotides[0].toString(),
+      direction: this.nucleotides[0].getNeighborIndex(this.nucleotides[1])
     })
   }
 

@@ -11,8 +11,7 @@ export default class Matrix {
     public app: App,
     public colsCount: number,
     public rowsCount: number,
-    public nucleotideRadius: number,
-    public flatTopped: boolean
+    public nucleotideRadius: number
   ) {
     for (let x = 0; x < colsCount; x++) {
       for (let y = 0; y < rowsCount; y++) {
@@ -38,9 +37,5 @@ export default class Matrix {
   draw( debug: boolean = false ) {
     for (const nucleotide of this.nucleotides)
       nucleotide.draw(debug)
-    if(debug){
-      this.p.fill(255)
-      this.p.text(Math.round(this.p.frameRate()), 10, 10)
-    }
   }
 }

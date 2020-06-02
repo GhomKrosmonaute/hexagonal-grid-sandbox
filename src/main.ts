@@ -45,8 +45,6 @@ function sketch( p:P5 ){
         50,
       /* path max length */
         9,
-      /* flat topped */
-        true,
       /* debug ? */
         true
     )

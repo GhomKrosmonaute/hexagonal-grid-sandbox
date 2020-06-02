@@ -11,7 +11,7 @@ export default class Nucleotide {
 
   constructor(
     public matrix:Matrix,
-    public gridPosition:p5.Vector
+    public matrixPosition:p5.Vector
   ) {
     const colors = Object.keys(matrix.app.images.nucleotides)
     this.colorName = colors[Math.floor(Math.random()*colors.length)]
@@ -24,12 +24,12 @@ export default class Nucleotide {
     }
   }
 
-  get p(): p5 {
-    return this.matrix.p
+  get evenCol(): boolean {
+    return this.matrixPosition.x % 2 === 0
   }
 
-  get flatTopped(): boolean {
-    return this.matrix.flatTopped
+  get p(): p5 {
+    return this.matrix.p
   }
 
   get radius(): number {
@@ -37,92 +37,85 @@ export default class Nucleotide {
   }
 
   get width(): number {
-    return !this.flatTopped ? this.p.sqrt(3) * this.radius : 2 * this.radius
+    return 2 * this.radius
   }
 
   get height(): number {
-    return !this.flatTopped ? 2 * this.radius : this.p.sqrt(3) * this.radius
+    return this.p.sqrt(3) * this.radius
   }
 
   get dist(): p5.Vector {
-    const
-      width = this.width,
-      height = this.height
     return this.p.createVector(
-      this.flatTopped ? width * (3 / 4) : width,
-      this.flatTopped ? height : height * (3 / 4)
+      this.width * (3 / 4), this.height
     )
   }
 
   get x(): number {
-    const width = this.width
-    return this.flatTopped ?
-      (width / 2 + this.gridPosition.x * this.dist.x) :
-      (this.gridPosition.x * width - width / 2) +
-      (this.gridPosition.y % 2 === 0 ? width / 2 : 0) + width
+    return this.width / 2 + this.matrixPosition.x * this.dist.x
   }
 
   get y(): number {
     const height = this.height
-    return this.flatTopped ?
-      (this.gridPosition.y * height - height / 2) +
-      (this.gridPosition.x % 2 === 0 ? height / 2 : 0) + height :
-      (height / 2 + this.gridPosition.y * this.dist.y)
-  }
-
-  get screenPosition(): p5.Vector {
-    return this.p.createVector(this.x, this.y)
+    return (this.matrixPosition.y * height - height / 2)
+      + (this.evenCol ? height / 2 : 0) + height
   }
 
   hovered(): boolean {
-    const pos = this.screenPosition
     return this.p.dist(
-      pos.x,pos.y,
+      this.x,this.y,
       this.p.mouseX,this.p.mouseY
-    ) < this.radius * 0.9
+    ) < this.radius * 0.86
   }
 
-  isNeighborOf(nucleotide: Nucleotide ): boolean {
-    const
-      x1 = this.gridPosition.x,
-      y1 = this.gridPosition.y,
-      x2 = nucleotide.gridPosition.x,
-      y2 = nucleotide.gridPosition.y
-    return this.gridPosition.x % 2 === 0 ? (
-      (x2 === x1 - 1 && y2 === y1) ||
-      (x2 === x1 + 1 && y2 === y1) ||
-      (x2 === x1 && y2 === y1 - 1) ||
-      (x2 === x1 + 1 && y2 === y1 + 1) ||
-      (x2 === x1 - 1 && y2 === y1 + 1) ||
-      (x2 === x1 && y2 === y1 + 1)
-    ) : (
-      (x2 === x1 - 1 && y2 === y1 - 1) ||
-      (x2 === x1 + 1 && y2 === y1 - 1) ||
-      (x2 === x1 && y2 === y1 - 1 ) ||
-      (x2 === x1 + 1 && y2 === y1) ||
-      (x2 === x1 - 1 && y2 === y1) ||
-      (x2 === x1 && y2 === y1 + 1)
-    )
+  /** return -1 is is not a neighbor, or the neighbor index */
+  getNeighborIndex( nucleotide: Nucleotide ): number {
+    for(let i=0; i<6; i++){
+      const neighbor = this.getNeighborGridPosition(i)
+      if(
+        neighbor.x === nucleotide.matrixPosition.x &&
+        neighbor.y === nucleotide.matrixPosition.y
+      ) return i
+    }
+    return -1
   }
 
-  getCornerPosition( i: number ): p5.Vector {
-    const angle = this.p.radians(60 * i - (this.flatTopped ? 0 : 30))
+  /** @param {number} neighborIndex - from 0 to 5, start on right corner */
+  getCornerPosition( neighborIndex: number ): p5.Vector {
+    const angle = this.p.radians(60 * neighborIndex)
     return this.p.createVector(
       this.x + this.radius * this.p.cos(angle),
       this.y + this.radius * this.p.sin(angle)
     )
   }
 
-  /** from 0 to 5, start on top */
-  getNeighborPosition( i: number ): p5.Vector {
+  /** from 0 to 5, start on top  */
+  getNeighborGridPosition( i: number ): p5.Vector {
+    const neighbor = this.matrixPosition.copy()
     switch (i) {
-      case 0:
+      case 0: neighbor.y --; break
+      case 3: neighbor.y ++; break
       case 1:
-      case 2:
-      case 3:
-      case 4:
+        neighbor.x ++
+        if(!this.evenCol)
+          neighbor.y --
+        break
       case 5:
+        neighbor.x --
+        if(!this.evenCol)
+          neighbor.y --
+        break
+      case 2:
+        neighbor.x ++
+        if(this.evenCol)
+          neighbor.y ++
+        break
+      case 4:
+        neighbor.x --
+        if(this.evenCol)
+          neighbor.y ++
+        break
     }
+    return neighbor
   }
 
   update() {
@@ -137,11 +130,6 @@ export default class Nucleotide {
   draw( debug:boolean = false ) {
     if(this.isWall) return
 
-    const
-      pos = this.screenPosition,
-      width = this.width,
-      height = this.height
-
     /* Mouse collision */
     const hovered = this.hovered()
 
@@ -149,18 +137,16 @@ export default class Nucleotide {
       /* Draw image */
       this.p.push()
       this.p.translate(
-        pos.x - (width * 1.2) * .5,
-        pos.y - (height * 1.2) * .5
+        this.x - (this.width * 1.2) * .5,
+        this.y - (this.height * 1.2) * .5
       )
-      if(!this.flatTopped)
-        this.p.rotate(this.p.radians(90))
       if(hovered) this.p.tint(255)
       else this.p.tint(200)
       this.p.noStroke()
       this.p.image(this.image,
         0, 0,
-        width * 1.2,
-        height * 1.2
+        this.width * 1.2,
+        this.height * 1.2
       )
       this.p.pop()
     }
@@ -183,7 +169,7 @@ export default class Nucleotide {
       this.p.fill(255)
       this.p.textSize(this.height * .15)
       this.p.textAlign(this.p.CENTER)
-      this.p.text(`x${this.gridPosition.x} y${this.gridPosition.y}`,
+      this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
         this.x, this.y + this.height * .41
       )
     }
@@ -192,8 +178,8 @@ export default class Nucleotide {
 
   toString(): string {
     return JSON.stringify({
-      x: this.gridPosition.x,
-      y: this.gridPosition.y
+      x: this.matrixPosition.x,
+      y: this.matrixPosition.y
     })
   }
 }

@@ -19,15 +19,13 @@ export default class App {
     rowsCount: number,
     nucleotideRadius: number,
     public pathMaxLength: number,
-    flatTopped: boolean,
     public debug: boolean
   ) {
     this.matrix = new Matrix(
       this,
       colsCount,
       rowsCount,
-      nucleotideRadius,
-      flatTopped
+      nucleotideRadius
     )
 
     this.linkDynamicOptions()
@@ -67,6 +65,11 @@ export default class App {
     if(this.path){
       this.path.draw(this.debug)
     }
+    if(this.debug){
+      this.p.noStroke()
+      this.p.fill(255)
+      this.p.text('Framerate: ' + Math.round(this.p.frameRate()), 10, 10)
+    }
   }
 
   mousePressed(){
@@ -96,7 +99,6 @@ export default class App {
   linkDynamicOptions(){
     // setup options values in form
     this.getInput("debug").checked = this.debug
-    this.getInput("flatTopped").checked = this.matrix.flatTopped
     this.getInput("cols").value = String(this.matrix.colsCount)
     this.getInput("rows").value = String(this.matrix.rowsCount)
     this.getInput("nucleotideRadius").value = String(this.matrix.nucleotideRadius)
@@ -108,16 +110,12 @@ export default class App {
       this.debug = (event.target as HTMLInputElement).checked
       document.getElementById("logs").style.display = this.debug ? "flex" : "none"
     }).bind(this)
-    this.getInput("flatTopped").onchange = (function (event:Event) {
-      this.matrix.flatTopped = (event.target as HTMLInputElement).checked
-    }).bind(this)
     this.getInput("cols").onchange = (function (event:Event) {
       this.matrix = new Matrix(
         this,
         +(event.target as HTMLInputElement).value,
         this.matrix.rowsCount,
-        this.matrix.nucleotideRadius,
-        this.matrix.flatTopped
+        this.matrix.nucleotideRadius
       )
     }).bind(this)
     this.getInput("rows").onchange = (function (event:Event) {
@@ -125,8 +123,7 @@ export default class App {
         this,
         this.matrix.colsCount,
         +(event.target as HTMLInputElement).value,
-        this.matrix.nucleotideRadius,
-        this.matrix.flatTopped
+        this.matrix.nucleotideRadius
       )
     }).bind(this)
     this.getInput("nucleotideRadius").onchange = (function (event:Event) {
