@@ -60,67 +60,89 @@ export default class Nucleotide {
       + (this.evenCol ? height / 2 : 0) + height
   }
 
-  hovered(): boolean {
+  get isHovered(): boolean {
     return this.p.dist(
       this.x,this.y,
       this.p.mouseX,this.p.mouseY
     ) < this.radius * 0.86
   }
 
-  /** return -1 is is not a neighbor, or the neighbor index */
-  getNeighborIndex( nucleotide: Nucleotide ): number {
-    for(let i=0; i<6; i++){
-      const neighbor = this.getNeighborGridPosition(i)
-      if(
-        neighbor.x === nucleotide.matrixPosition.x &&
-        neighbor.y === nucleotide.matrixPosition.y
-      ) return i
-    }
-    return -1
+  recursiveMove( neighborIndex: number ){
+    // get the target neighbor
+    const neighbor = this.getNeighbor(neighborIndex)
+
+    // get the opposed neighbor
+    let opposedNeighborIndex =  neighborIndex - 3
+    if(opposedNeighborIndex < 0) opposedNeighborIndex += 6
+    const opposedNeighbor = this.getNeighbor(opposedNeighborIndex)
+
+    // swap places with this nucleotide
+    const oldMatrixPosition = this.matrixPosition.copy()
+    this.matrixPosition = neighbor.matrixPosition.copy()
+    neighbor.matrixPosition = oldMatrixPosition.copy()
+
+    // continue recursively
+    if(opposedNeighbor) opposedNeighbor.recursiveMove(neighborIndex)
   }
 
-  /** @param {number} neighborIndex - from 0 to 5, start on right corner */
-  getCornerPosition( neighborIndex: number ): p5.Vector {
-    const angle = this.p.radians(60 * neighborIndex)
+  /** @param {number} neighborIndex - from 0 to 5, start on top  */
+  getNeighbor( neighborIndex: number ): Nucleotide | null {
+    return this.matrix.nucleotides.find( n => {
+      return this.getNeighborIndex(n) === neighborIndex
+    })
+  }
+
+  /** @returns {number} -1 if is not a neighbor, or the neighbor index */
+  getNeighborIndex( nucleotide: Nucleotide ): number {
+    for(let i=0; i<6; i++){
+      if(this.getNeighborMatrixPosition(i)
+        .equals(nucleotide.matrixPosition)
+      ) return i
+    } return -1
+  }
+
+  /** @param {number} cornerIndex - from 0 to 5, start on right corner */
+  getCornerPosition( cornerIndex: number ): p5.Vector {
+    const angle = this.p.radians(60 * cornerIndex)
     return this.p.createVector(
       this.x + this.radius * this.p.cos(angle),
       this.y + this.radius * this.p.sin(angle)
     )
   }
 
-  /** from 0 to 5, start on top  */
-  getNeighborGridPosition( i: number ): p5.Vector {
-    const neighbor = this.matrixPosition.copy()
-    switch (i) {
-      case 0: neighbor.y --; break
-      case 3: neighbor.y ++; break
+  /** @param {number} neighborIndex - from 0 to 5, start on top  */
+  getNeighborMatrixPosition( neighborIndex: number ): p5.Vector {
+    const matrixPosition = this.matrixPosition.copy()
+    switch (neighborIndex) {
+      case 0: matrixPosition.y --; break
+      case 3: matrixPosition.y ++; break
       case 1:
-        neighbor.x ++
+        matrixPosition.x ++
         if(!this.evenCol)
-          neighbor.y --
+          matrixPosition.y --
         break
       case 5:
-        neighbor.x --
+        matrixPosition.x --
         if(!this.evenCol)
-          neighbor.y --
+          matrixPosition.y --
         break
       case 2:
-        neighbor.x ++
+        matrixPosition.x ++
         if(this.evenCol)
-          neighbor.y ++
+          matrixPosition.y ++
         break
       case 4:
-        neighbor.x --
+        matrixPosition.x --
         if(this.evenCol)
-          neighbor.y ++
+          matrixPosition.y ++
         break
     }
-    return neighbor
+    return matrixPosition
   }
 
   update() {
     /* Mouse collision */
-    const hovered = this.hovered()
+    const hovered = this.isHovered
 
     /* Path update */
     if(hovered && this.matrix.app.path)
@@ -131,7 +153,7 @@ export default class Nucleotide {
     if(this.isWall) return
 
     /* Mouse collision */
-    const hovered = this.hovered()
+    const hovered = this.isHovered
 
     if (!debug) {
       /* Draw image */

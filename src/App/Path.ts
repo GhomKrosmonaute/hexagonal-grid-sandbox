@@ -6,7 +6,6 @@ import Nucleotide from './Nucleotide';
 export default class Path {
 
   public nucleotides: Nucleotide[] = []
-  //public slider: boolean = false
 
   constructor(
     public app: App,
@@ -19,6 +18,10 @@ export default class Path {
     return this.app.pathList
   }
 
+  get length(): number {
+    return this.nucleotides.length
+  }
+
   get p(): p5 {
     return this.app.p
   }
@@ -27,22 +30,17 @@ export default class Path {
     return this.app.pathMaxLength
   }
 
-  update(nucleotide: Nucleotide): void {
+  get first(): Nucleotide | null {
+    return this.nucleotides[0]
+  }
 
-    // if(
-    //   this.nucleotides.length === 1 &&
-    //   nucleotide.isWall
-    // ) {
-    //   this.slider = true
-    // }else if(
-    //   this.nucleotides.length > 1 &&
-    //   nucleotide.isWall
-    // ) return
+  update(nucleotide: Nucleotide): void {
 
     // in crunch path case
     if(this.app.state === "crunch"){
       // check if the current nucleotide is a wall/hole
-      if(nucleotide.isWall) return
+      if(this.length > 0 && nucleotide.isWall) return
+      if(this.first.isWall) return
     }
 
     // check the cancellation & cancel to previous nucleotide
@@ -113,13 +111,19 @@ export default class Path {
         return [String(i),n.toString()]
       }))
     })
+    this.nucleotides.forEach( n => {
+      n.isWall = true
+    })
   }
 
   slide(){
+    if(!this.nucleotides[1]) return
+    const neighborIndex = this.nucleotides[0].getNeighborIndex(this.nucleotides[1])
     this.app.log("Slided Path", {
       from: this.nucleotides[0].toString(),
-      direction: this.nucleotides[0].getNeighborIndex(this.nucleotides[1])
+      direction: neighborIndex
     })
+    this.nucleotides[0].recursiveMove(neighborIndex)
   }
 
 }

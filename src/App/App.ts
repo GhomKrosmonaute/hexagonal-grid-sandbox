@@ -27,13 +27,12 @@ export default class App {
       rowsCount,
       nucleotideRadius
     )
-
-    this.linkDynamicOptions()
+    this.setupOptionsForm()
   }
 
-  get hovered(): Nucleotide | null {
+  getHovered(): Nucleotide | null {
     return this.matrix.nucleotides
-      .find( nucleotide => nucleotide.hovered() )
+      .find( nucleotide => nucleotide.isHovered )
   }
 
   getInput( name: string ): HTMLInputElement {
@@ -50,8 +49,7 @@ export default class App {
     }).join(' ')}</ul>`
     logs.appendChild(log)
     if(
-      logs.getBoundingClientRect().height >
-      document.body.getBoundingClientRect().height
+      logs.children.length > 30
     ) logs.children[0].remove()
     return this
   }
@@ -73,22 +71,20 @@ export default class App {
   }
 
   mousePressed(){
-    const hovered = this.hovered
-    if(this.p.mouseButton === this.p.LEFT) {
-      if(hovered && !hovered.isWall)
-        this.path = new Path(this, hovered)
-    }else{
-      if(hovered) hovered.isWall = true
-      this.log("Hole/Wall placed", {
-        position: hovered.toString()
-      })
-    }
+    const hovered = this.getHovered()
+    if(hovered) this.path = new Path(this, hovered)
   }
 
   mouseReleased(){
     if(this.p.mouseButton === this.p.LEFT){
       if(this.path){
-        if(this.state === "slide")
+        if(this.path.length === 1) {
+          const n = this.path.first
+          n.isWall = !n.isWall
+          this.log('Hole/Wall ' + (n.isWall ? 'placed' : 'removed'), {
+            position: n.toString()
+          })
+        }else if(this.state === "slide")
           this.path.slide()
         else this.path.crunch()
         this.path = null
@@ -96,7 +92,7 @@ export default class App {
     }
   }
 
-  linkDynamicOptions(){
+  setupOptionsForm(){
     // setup options values in form
     this.getInput("debug").checked = this.debug
     this.getInput("cols").value = String(this.matrix.colsCount)
