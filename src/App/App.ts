@@ -10,7 +10,6 @@ export default class App {
   public matrix: Matrix
   public logIndex: number = 0
   public state: "crunch" | "slide" = "crunch"
-  public pathList: Path[] = []
 
   constructor(
     public p:p5,
@@ -27,7 +26,7 @@ export default class App {
       rowsCount,
       nucleotideRadius
     )
-    this.setupOptionsForm()
+    this.setupPanel()
   }
 
   getHovered(): Nucleotide | null {
@@ -37,6 +36,9 @@ export default class App {
 
   getInput( name: string ): HTMLInputElement {
     return document.getElementById(name) as HTMLInputElement
+  }
+  getButton( name: string ): HTMLButtonElement {
+    return document.getElementById(name) as HTMLButtonElement
   }
 
   log( event: string, data: {[k:string]:string|number|boolean} ): App {
@@ -72,7 +74,8 @@ export default class App {
 
   mousePressed(){
     const hovered = this.getHovered()
-    if(hovered) this.path = new Path(this, hovered)
+    if(hovered && (!this.path || !this.path.nucleotides.includes(hovered)))
+      this.path = new Path(this, hovered)
   }
 
   mouseReleased(){
@@ -84,15 +87,16 @@ export default class App {
           this.log('Hole/Wall ' + (n.isWall ? 'placed' : 'removed'), {
             position: n.toString()
           })
-        }else if(this.state === "slide")
+        }else if(this.state === "slide") {
           this.path.slide()
-        else this.path.crunch()
-        this.path = null
+        }
+        if(this.state !== "crunch")
+          this.path = null
       }
     }
   }
 
-  setupOptionsForm(){
+  setupPanel(){
     // setup options values in form
     this.getInput("debug").checked = this.debug
     this.getInput("cols").value = String(this.matrix.colsCount)
@@ -100,6 +104,16 @@ export default class App {
     this.getInput("nucleotideRadius").value = String(this.matrix.nucleotideRadius)
     this.getInput("pathMaxLength").value = String(this.pathMaxLength)
     this.getInput(this.state).checked = true
+
+    // listen game buttons
+    this.getButton("validate").onclick = (function (event:Event) {
+      if(this.state === "crunch"){
+        if(this.path) {
+          this.path.crunch()
+          this.path = null
+        }
+      }
+    }).bind(this)
 
     // listen form
     this.getInput("debug").onchange = (function (event:Event) {

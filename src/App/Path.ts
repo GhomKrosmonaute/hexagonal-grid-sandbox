@@ -14,10 +14,6 @@ export default class Path {
     this.nucleotides.push(start)
   }
 
-  get other(): Path[] {
-    return this.app.pathList
-  }
-
   get length(): number {
     return this.nucleotides.length
   }

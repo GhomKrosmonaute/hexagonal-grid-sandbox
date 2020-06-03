@@ -145,7 +145,7 @@ export default class Nucleotide {
     const hovered = this.isHovered
 
     /* Path update */
-    if(hovered && this.matrix.app.path)
+    if(hovered && this.matrix.app.path && this.p.mouseIsPressed)
       this.matrix.app.path.update(this)
   }
 
