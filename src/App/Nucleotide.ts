@@ -5,7 +5,6 @@ import p5 from "p5";
 export default class Nucleotide {
 
   public image: p5.Image
-  public color: p5.Color
   public colorName: string
   public isWall: boolean = false
 
@@ -13,15 +12,13 @@ export default class Nucleotide {
     public matrix: Matrix,
     public matrixPosition: p5.Vector
   ) {
-    const colors = Object.keys(matrix.app.images.nucleotides)
-    this.colorName = colors[Math.floor(Math.random()*colors.length)]
+    const colorNames = matrix.app.colorNames
+    this.colorName = colorNames[Math.floor(Math.random()*colorNames.length)]
     this.image = matrix.app.images.nucleotides[this.colorName]
-    switch (this.colorName) {
-      case 'blue': this.color = this.p.color(0,0,255); break
-      case 'red': this.color = this.p.color(255,0,0); break
-      case 'yellow': this.color = this.p.color(255,255,0); break
-      case 'green': this.color = this.p.color(0,255,0); break
-    }
+  }
+
+  get color(): p5.Color {
+    return this.matrix.app.getColor(this.colorName)
   }
 
   get evenCol(): boolean {

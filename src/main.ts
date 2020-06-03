@@ -44,7 +44,7 @@ function sketch( p:P5 ){
       /* nucleotides radius */
         50,
       /* path max length */
-        9,
+        6,
       /* debug ? */
         true
     )

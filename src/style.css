@@ -65,12 +65,19 @@ label {
   width: auto;
 }
 
-input {
+input, button {
   overflow: visible;
   font-size: 21px;
   border: none;
   background-color: rgba(0, 0, 0, 0);
   color: #d2691e;
+}
+
+button {
+  border: 2px solid chocolate;
+}
+button:hover {
+  border-color: #FFFFFF;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -121,3 +128,4 @@ input[type=number] {
 .log .value {
   color: chocolate;
 }
+

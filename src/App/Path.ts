@@ -18,6 +18,13 @@ export default class Path {
     return this.nucleotides.length
   }
 
+  get isValidSequence(): boolean {
+    return (
+      this.app.sequence.join(',') === this.nucleotides.map( n => n.colorName ).join(',') ||
+      this.app.sequence.slice(0).reverse().join(',') === this.nucleotides.map( n => n.colorName ).join(',')
+    )
+  }
+
   get p(): p5 {
     return this.app.p
   }
@@ -69,13 +76,14 @@ export default class Path {
   draw( debug:boolean = false ){
     if(debug || true){
       let last: Nucleotide = null
+      let color: number = this.isValidSequence ? 255 : 170
 
       // for all nucleotide in path
       for(const nucleotide of this.nucleotides){
 
         // draw ellipse
         this.p.noStroke()
-        this.p.fill(255)
+        this.p.fill(color)
         this.p.ellipse(
           nucleotide.x,
           nucleotide.y,
@@ -85,7 +93,7 @@ export default class Path {
 
           // draw line
           this.p.strokeWeight(3)
-          this.p.stroke(255)
+          this.p.stroke(color)
           this.p.line(
             last.x,
             last.y,
@@ -100,16 +108,27 @@ export default class Path {
   }
 
   crunch(){
-    this.app.log("Crunched Path", {
-      length: this.nucleotides.length,
-      // @ts-ignore
-      ...Object.fromEntries(this.nucleotides.map((n,i) => {
-        return [String(i),n.toString()]
-      }))
-    })
-    this.nucleotides.forEach( n => {
-      n.isWall = true
-    })
+    if(this.isValidSequence){
+      this.app.log("Validated Path", {
+        length: this.nucleotides.length,
+        // @ts-ignore
+        ...Object.fromEntries(this.nucleotides.map((n,i) => {
+          return [String(i),n.toString()]
+        }))
+      })
+      this.nucleotides.forEach( n => {
+        n.isWall = true
+      })
+      this.app.sequence = this.app.getRandomSequence()
+    }else{
+      this.app.log("Unvalidated Path", {
+        length: this.nucleotides.length,
+        // @ts-ignore
+        ...Object.fromEntries(this.nucleotides.map((n,i) => {
+          return [String(i),n.toString()]
+        }))
+      })
+    }
   }
 
   slide(){

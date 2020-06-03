@@ -10,6 +10,7 @@ export default class App {
   public matrix: Matrix
   public logIndex: number = 0
   public state: "crunch" | "slide" = "crunch"
+  public sequence: string[]
 
   constructor(
     public p:p5,
@@ -26,7 +27,12 @@ export default class App {
       rowsCount,
       nucleotideRadius
     )
+    this.sequence = this.getRandomSequence()
     this.setupPanel()
+  }
+
+  get colorNames(): string[] {
+    return Object.keys(this.images.nucleotides)
   }
 
   getHovered(): Nucleotide | null {
@@ -39,6 +45,22 @@ export default class App {
   }
   getButton( name: string ): HTMLButtonElement {
     return document.getElementById(name) as HTMLButtonElement
+  }
+
+  getColor( name: string ): p5.Color {
+    switch (name) {
+      case 'blue': return this.p.color(0,0,255)
+      case 'red': return this.p.color(255,0,0)
+      case 'yellow': return this.p.color(255,255,0)
+      case 'green': return this.p.color(0,255,0)
+    }
+  }
+
+  getRandomSequence(): string[] {
+    const sequence: string[] = []
+    for(let i=0; i<this.pathMaxLength; i++)
+      sequence.push(this.colorNames[Math.floor(Math.random()*this.colorNames.length)])
+    return sequence
   }
 
   log( event: string, data: {[k:string]:string|number|boolean} ): App {
@@ -65,10 +87,34 @@ export default class App {
     if(this.path){
       this.path.draw(this.debug)
     }
+
+    // show current sequence
+    this.p.noStroke()
+    this.p.fill(0,170)
+    this.p.rect(
+      this.p.width - this.pathMaxLength * 50,
+      this.p.height - 50,
+      this.pathMaxLength * 50,
+      50
+    )
+    this.sequence.forEach(( colorName, index ) => {
+      this.p.fill(this.getColor(colorName))
+      this.p.ellipse(
+        (this.p.width - this.pathMaxLength * 50) + (index * 50 + 25),
+        this.p.height - 25, 30
+      )
+    })
+
     if(this.debug){
       this.p.noStroke()
+      this.p.fill(0,170)
+      this.p.rect(0, 0,
+        this.p.width, 35
+      )
       this.p.fill(255)
-      this.p.text('Framerate: ' + Math.round(this.p.frameRate()), 10, 10)
+      this.p.textSize(20)
+      this.p.textAlign(this.p.LEFT)
+      this.p.text('Framerate: ' + Math.round(this.p.frameRate()), 10, 25)
     }
   }
 
@@ -87,11 +133,11 @@ export default class App {
           this.log('Hole/Wall ' + (n.isWall ? 'placed' : 'removed'), {
             position: n.toString()
           })
+          this.path = null
         }else if(this.state === "slide") {
           this.path.slide()
-        }
-        if(this.state !== "crunch")
           this.path = null
+        }
       }
     }
   }
@@ -113,6 +159,9 @@ export default class App {
           this.path = null
         }
       }
+    }).bind(this)
+    this.getButton("sequence").onclick = (function (event:Event) {
+      this.sequence = this.getRandomSequence()
     }).bind(this)
 
     // listen form
