@@ -198,7 +198,8 @@ export default class Nucleotide {
   toString(): string {
     return JSON.stringify({
       x: this.matrixPosition.x,
-      y: this.matrixPosition.y
+      y: this.matrixPosition.y,
+      color: this.colorName
     })
   }
 }

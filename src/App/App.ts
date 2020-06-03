@@ -70,7 +70,7 @@ export default class App {
     log.className = "log"
     log.innerHTML = `<span class="index">[${this.logIndex}]</span><span class="event">${event}</span> <ul>${Object.entries(data).map( entry => {
       return `<li><span class="name">${entry[0]}</span><span class="sign">=</span><span class="value">${entry[1]}</span></li>`
-    }).join(' ')}</ul>`
+    }).join(' ')}</ul>`.replace(/"/g,'')
     logs.appendChild(log)
     if(
       logs.children.length > 30
