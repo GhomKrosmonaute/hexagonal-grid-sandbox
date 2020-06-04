@@ -6,15 +6,13 @@ export default class Nucleotide {
 
   public image: p5.Image
   public colorName: string
-  public isWall: boolean = false
+  public isWall: boolean
 
   constructor(
     public matrix: Matrix,
     public matrixPosition: p5.Vector
   ) {
-    const colorNames = matrix.app.colorNames
-    this.colorName = colorNames[Math.floor(Math.random()*colorNames.length)]
-    this.image = matrix.app.images.nucleotides[this.colorName]
+    this.generate()
   }
 
   get color(): p5.Color {
@@ -64,29 +62,44 @@ export default class Nucleotide {
     ) < this.radius * 0.86
   }
 
-  recursiveMove( neighborIndex: number ){
-    // get the target neighbor
-    const neighbor = this.getNeighbor(neighborIndex)
-
-    // get the opposed neighbor
-    let opposedNeighborIndex = neighborIndex - 3
-    if(opposedNeighborIndex < 0) opposedNeighborIndex += 6
-    const opposedNeighbor = this.getNeighbor(opposedNeighborIndex)
-
-    // swap places with this nucleotide
-    const oldMatrixPosition = this.matrixPosition.copy()
-    this.matrixPosition = neighbor.matrixPosition.copy()
-    neighbor.matrixPosition = oldMatrixPosition.copy()
-
-    // continue recursively
-    if(opposedNeighbor) opposedNeighbor.recursiveMove(neighborIndex)
+  generate() {
+    this.isWall = false
+    const colorNames = this.matrix.app.colorNames
+    this.colorName = colorNames[Math.floor(Math.random()*colorNames.length)]
+    this.image = this.matrix.app.images.nucleotides[this.colorName]
   }
 
-  /** @param {number} neighborIndex - from 0 to 5, start on top  */
+  swap( nucleotide: Nucleotide ){
+    const oldMatrixPosition = this.matrixPosition.copy()
+    this.matrixPosition.set(nucleotide.matrixPosition)
+    nucleotide.matrixPosition.set(oldMatrixPosition)
+  }
+
+  /** @param {number} neighborIndex - from 0 to 5, start on top */
+  recursiveSwap( neighborIndex: number ){
+    // get the opposed neighbor
+    const neighbor = this.getNeighbor(neighborIndex)
+    if(neighbor){
+      // swap places with this nucleotide
+      this.swap(neighbor)
+
+      // continue recursively
+      this.recursiveSwap(neighborIndex)
+    }
+  }
+
+  /** @param {number} neighborIndex - from 0 to 5, start on top */
   getNeighbor( neighborIndex: number ): Nucleotide | null {
     return this.matrix.nucleotides.find( n => {
       return this.getNeighborIndex(n) === neighborIndex
     })
+  }
+
+  /** @param {number} neighborIndex - from 0 to 5, start on top */
+  getNeighbors( neighborIndex: number ): Nucleotide[] {
+    const neighbor = this.getNeighbor(neighborIndex)
+    if(!neighbor) return []
+    return [neighbor, ...neighbor.getNeighbors(neighborIndex)]
   }
 
   /** @returns {number} -1 if is not a neighbor, or the neighbor index */
@@ -107,7 +120,7 @@ export default class Nucleotide {
     )
   }
 
-  /** @param {number} neighborIndex - from 0 to 5, start on top  */
+  /** @param {number} neighborIndex - from 0 to 5, start on top */
   getNeighborMatrixPosition( neighborIndex: number ): p5.Vector {
     const matrixPosition = this.matrixPosition.copy()
     switch (neighborIndex) {

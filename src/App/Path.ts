@@ -119,7 +119,7 @@ export default class Path {
       this.nucleotides.forEach( n => {
         n.isWall = true
       })
-      this.app.sequence = this.app.getRandomSequence()
+      this.app.generateSequence()
     }else{
       this.app.log("Unvalidated Path", {
         length: this.nucleotides.length,
@@ -133,21 +133,13 @@ export default class Path {
 
   slide(){
     if(!this.nucleotides[1]) return
-    if(!this.nucleotides[1].isWall) return
-
-    this.nucleotides[1].isWall = false
-    this.nucleotides[1].colorName = this.app.colorNames[
-      Math.floor(Math.random()*this.app.colorNames.length)
-    ]
 
     const neighborIndex = this.nucleotides[0].getNeighborIndex(this.nucleotides[1])
 
-    this.app.log("Slided Path", {
-      from: this.nucleotides[0].toString(),
+    this.app.log("Slide", {
       direction: neighborIndex
     })
 
-    this.nucleotides[0].recursiveMove(neighborIndex)
+    this.app.matrix.slide(neighborIndex)
   }
-
 }

@@ -29,6 +29,19 @@ export default class Matrix {
     return this.app.p
   }
 
+  slide( neighborIndex: number ){
+    const opposedNeighborIndex = this.app.opposedIndexOf(neighborIndex)
+    for (const nucleotide of this.nucleotides)
+      if(nucleotide.isWall){
+        nucleotide.generate()
+        nucleotide.recursiveSwap(opposedNeighborIndex)
+        // const neighbors = nucleotide.getNeighbors(opposedNeighborIndex)
+        // nucleotide.matrixPosition.set(neighbors[neighbors.length-1].matrixPosition)
+        // for (const neighbor of neighbors)
+        //   neighbor.moveByNeighborIndex(neighborIndex)
+      }
+  }
+
   update() {
     for (const nucleotide of this.nucleotides)
       nucleotide.update()

@@ -5,7 +5,7 @@ import './style.css'
 import P5 from 'p5'
 import App from "./App/App"
 
-//@ts-ignore
+// @ts-ignore
 import blue from "./images/nucleotide_bleu.png"
 //@ts-ignore
 import red from "./images/nucleotide_rouge.png"

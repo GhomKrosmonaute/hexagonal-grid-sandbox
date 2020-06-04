@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "p5 tests for crispr crunch",
   "scripts": {
-    "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --open --watch --content-base src/ --mode development",
+    "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --open --watch --disable-host-check --host 0.0.0.0 --content-base src/ --mode development",
     "git": "git rm -rf dist --ignore-unmatch && npm run build && git add *",
     "build": "webpack --config webpack.config.js --mode production",
     "build.prod": "webpack --config webpack.config.js -p",

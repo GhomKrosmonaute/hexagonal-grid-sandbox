@@ -27,7 +27,7 @@ export default class App {
       rowsCount,
       nucleotideRadius
     )
-    this.sequence = this.getRandomSequence()
+    this.generateSequence()
     this.setupPanel()
   }
 
@@ -56,11 +56,18 @@ export default class App {
     }
   }
 
-  getRandomSequence(): string[] {
+  generateSequence(): string[] {
     const sequence: string[] = []
     for(let i=0; i<this.pathMaxLength; i++)
       sequence.push(this.colorNames[Math.floor(Math.random()*this.colorNames.length)])
+    this.sequence = sequence
     return sequence
+  }
+
+  opposedIndexOf( neighborIndex: number ): number {
+    let opposedNeighborIndex = neighborIndex - 3
+    if(opposedNeighborIndex < 0) opposedNeighborIndex += 6
+    return opposedNeighborIndex
   }
 
   log( event: string, data: {[k:string]:string|number|boolean} ): App {
@@ -161,7 +168,7 @@ export default class App {
       }
     }).bind(this)
     this.getButton("sequence").onclick = (function (event:Event) {
-      this.sequence = this.getRandomSequence()
+      this.generateSequence()
     }).bind(this)
 
     // listen form
@@ -190,6 +197,7 @@ export default class App {
     }).bind(this)
     this.getInput("pathMaxLength").onchange = (function (event:Event) {
       this.pathMaxLength = +(event.target as HTMLInputElement).value
+      this.generateSequence()
     }).bind(this)
     const stateListener = (function(event:Event){
       this.state = this.getInput("crunch").checked ? "crunch" : "slide"
