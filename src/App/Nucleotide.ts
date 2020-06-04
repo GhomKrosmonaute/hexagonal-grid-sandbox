@@ -95,14 +95,20 @@ export default class Nucleotide {
     })
   }
 
-  /** @param {number} neighborIndex - from 0 to 5, start on top */
-  getNeighbors( neighborIndex: number ): Nucleotide[] {
-    const neighbor = this.getNeighbor(neighborIndex)
-    if(!neighbor) return []
-    return [neighbor, ...neighbor.getNeighbors(neighborIndex)]
+  getNeighbors(): [Nucleotide,Nucleotide,Nucleotide,Nucleotide,Nucleotide,Nucleotide] {
+    const neighbors: Nucleotide[] = []
+    for (let i=0; i<6; i++) neighbors.push(this.getNeighbor(i))
+    return neighbors as [Nucleotide,Nucleotide,Nucleotide,Nucleotide,Nucleotide,Nucleotide]
   }
 
-  /** @returns {number} -1 if is not a neighbor, or the neighbor index */
+  /** @param {number} neighborIndex - from 0 to 5, start on top */
+  getNeighborsInLine( neighborIndex: number ): Nucleotide[] {
+    const neighbor = this.getNeighbor(neighborIndex)
+    if(!neighbor) return []
+    return [neighbor, ...neighbor.getNeighborsInLine(neighborIndex)]
+  }
+
+  /** @returns {number} - -1 if is not a neighbor or the neighbor index */
   getNeighborIndex( nucleotide: Nucleotide ): number {
     for(let i=0; i<6; i++){
       if(this.getNeighborMatrixPosition(i)
