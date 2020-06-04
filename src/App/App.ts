@@ -91,9 +91,7 @@ export default class App {
 
   draw(){
     this.matrix.draw(this.debug)
-    if(this.path){
-      this.path.draw(this.debug)
-    }
+    if(this.path) this.path.draw(this.debug)
 
     // show current sequence
     this.p.noStroke()
@@ -106,6 +104,15 @@ export default class App {
     )
     this.sequence.forEach(( colorName, index ) => {
       this.p.fill(this.getColor(colorName))
+      const xedni = (this.pathMaxLength-1)-index
+      if(this.path && (
+        (this.path.nucleotides[index] && this.path.nucleotides[index].colorName === colorName) ||
+        (this.path.nucleotides[xedni] && this.path.nucleotides[xedni].colorName === colorName)
+      )) {
+        this.p.stroke(255)
+        this.p.strokeWeight(3)
+      }
+      else this.p.noStroke()
       this.p.ellipse(
         (this.p.width - this.pathMaxLength * 50) + (index * 50 + 25),
         this.p.height - 25, 30
