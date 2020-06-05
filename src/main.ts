@@ -13,10 +13,11 @@ import red from "./images/nucleotide_rouge.png"
 import yellow from "./images/nucleotide_jaune.png"
 //@ts-ignore
 import green from "./images/nucleotide_verte.png"
+//@ts-ignore
+window.app = null
 
 function sketch( p:P5 ){
 
-  let app:App = null
   let images:{[folder:string]:{[name:string]:P5.Image}} = null
 
   p.preload = () => {
@@ -34,14 +35,17 @@ function sketch( p:P5 ){
     for(const name in images.nucleotides)
       images.nucleotides[name].resize( 75, 75 )
     p.createCanvas( 480, 480 )
-    app = new App(p,
+    //@ts-ignore
+    window.app = new App(p,
       /* images */
         images,
       /* nbr columns */
         6,
       /* nbr rows */
         5,
-      /* nucleotides radius */
+      /* nbr cuts */
+      5,
+      /* items radius */
         50,
       /* path max length */
         6,
@@ -52,16 +56,20 @@ function sketch( p:P5 ){
 
   p.draw = () => {
     p.background(30)
-    app.update()
-    app.draw()
+    //@ts-ignore
+    window.app.update()
+    //@ts-ignore
+    window.app.draw()
   }
 
   p.mousePressed = () => {
-    app.mousePressed()
+    //@ts-ignore
+    window.app.mousePressed()
   }
 
   p.mouseReleased = () => {
-    app.mouseReleased()
+    //@ts-ignore
+    window.app.mouseReleased()
   }
 }
 

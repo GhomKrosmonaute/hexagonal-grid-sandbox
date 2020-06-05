@@ -7,6 +7,7 @@ export default class Nucleotide {
   public image: p5.Image
   public colorName: string
   public isWall: boolean
+  public isCut: boolean
 
   constructor(
     public matrix: Matrix,
@@ -172,7 +173,7 @@ export default class Nucleotide {
     const hovered = this.isHovered
 
     if (!debug) {
-      /* Draw image */
+      // Draw image
       this.p.push()
       this.p.translate(
         this.x - (this.width * 1.2) * .5,
@@ -190,22 +191,33 @@ export default class Nucleotide {
     }
 
     else {
-      /* Draw vectoriel nucleotide */
-      if(hovered) this.color.setAlpha(255)
-      else this.color.setAlpha(160)
-      this.p.fill(this.color)
+
       this.p.stroke(10)
       this.p.strokeWeight(1)
-      this.p.beginShape()
-      for (let i = 0; i < 6; i++){
-        const corner = this.getCornerPosition(i)
-        this.p.vertex(corner.x,corner.y)
+
+      if(this.isCut){
+        // Draw vectoriel cut
+        if(hovered) this.p.fill(255)
+        this.p.fill(180)
+        this.p.ellipse(this.x,this.y,this.width * .6)
+      }else{
+        // Draw vectoriel nucleotide
+        if(hovered) this.color.setAlpha(255)
+        else this.color.setAlpha(150)
+        this.p.fill(this.color)
+        this.p.beginShape()
+        for (let i = 0; i < 6; i++){
+          const corner = this.getCornerPosition(i)
+          this.p.vertex(corner.x,corner.y)
+        }
+        this.p.endShape(this.p.CLOSE)
       }
-      this.p.endShape(this.p.CLOSE)
+
+      // position text
       this.p.stroke(0)
-      this.p.strokeWeight(10)
+      this.p.strokeWeight(3)
       this.p.fill(255)
-      this.p.textSize(this.height * .15)
+      this.p.textSize(this.height * .2)
       this.p.textAlign(this.p.CENTER)
       this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
         this.x, this.y + this.height * .41

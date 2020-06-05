@@ -17,6 +17,7 @@ export default class App {
     public images: any,
     colsCount: number,
     rowsCount: number,
+    cutCount: number,
     nucleotideRadius: number,
     public pathMaxLength: number,
     public debug: boolean
@@ -25,6 +26,7 @@ export default class App {
       this,
       colsCount,
       rowsCount,
+      cutCount,
       nucleotideRadius
     )
     this.generateSequence()
@@ -106,8 +108,8 @@ export default class App {
       this.p.fill(this.getColor(colorName))
       const xedni = (this.pathMaxLength-1)-index
       if(this.path && (
-        (this.path.nucleotides[index] && this.path.nucleotides[index].colorName === colorName) ||
-        (this.path.nucleotides[xedni] && this.path.nucleotides[xedni].colorName === colorName)
+        (this.path.items.filter(n => !n.isCut)[index] && this.path.items.filter(n => !n.isCut)[index].colorName === colorName) ||
+        (this.path.items.filter(n => !n.isCut)[xedni] && this.path.items.filter(n => !n.isCut)[xedni].colorName === colorName)
       )) {
         this.p.stroke(255)
         this.p.strokeWeight(3)
@@ -134,8 +136,15 @@ export default class App {
 
   mousePressed(){
     const hovered = this.getHovered()
-    if(hovered && (!this.path || !this.path.nucleotides.includes(hovered)))
-      this.path = new Path(this, hovered)
+    if(hovered && (!this.path || !this.path.items.includes(hovered))){
+      if(this.state === "crunch"){
+        if(!hovered.isCut)
+          this.path = new Path(this, hovered)
+      }else{
+        this.path = new Path(this, hovered)
+      }
+    }
+
   }
 
   mouseReleased(){
@@ -161,11 +170,15 @@ export default class App {
     this.getInput("debug").checked = this.debug
     this.getInput("cols").value = String(this.matrix.colsCount)
     this.getInput("rows").value = String(this.matrix.rowsCount)
+    this.getInput("cuts").value = String(this.matrix.cutCount)
     this.getInput("nucleotideRadius").value = String(this.matrix.nucleotideRadius)
     this.getInput("pathMaxLength").value = String(this.pathMaxLength)
     this.getInput(this.state).checked = true
 
     // listen game buttons
+    this.getButton("cancel").onclick = (function (event:Event) {
+      this.path = null
+    }).bind(this)
     this.getButton("validate").onclick = (function (event:Event) {
       if(this.state === "crunch"){
         if(this.path) {
@@ -176,6 +189,15 @@ export default class App {
     }).bind(this)
     this.getButton("sequence").onclick = (function (event:Event) {
       this.generateSequence()
+    }).bind(this)
+    this.getButton("matrix").onclick = (function (event:Event) {
+      this.matrix = new Matrix(
+        this,
+        this.matrix.colsCount,
+        this.matrix.rowsCount,
+        this.matrix.cutCount,
+        this.matrix.nucleotideRadius
+      )
     }).bind(this)
 
     // listen form
@@ -188,6 +210,7 @@ export default class App {
         this,
         +(event.target as HTMLInputElement).value,
         this.matrix.rowsCount,
+        this.matrix.cutCount,
         this.matrix.nucleotideRadius
       )
     }).bind(this)
@@ -195,6 +218,16 @@ export default class App {
       this.matrix = new Matrix(
         this,
         this.matrix.colsCount,
+        +(event.target as HTMLInputElement).value,
+        this.matrix.cutCount,
+        this.matrix.nucleotideRadius
+      )
+    }).bind(this)
+    this.getInput("cuts").onchange = (function (event:Event) {
+      this.matrix = new Matrix(
+        this,
+        this.matrix.colsCount,
+        this.matrix.rowsCount,
         +(event.target as HTMLInputElement).value,
         this.matrix.nucleotideRadius
       )

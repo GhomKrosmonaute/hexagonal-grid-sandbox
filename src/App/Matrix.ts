@@ -11,6 +11,7 @@ export default class Matrix {
     public app: App,
     public colsCount: number,
     public rowsCount: number,
+    public cutCount: number,
     public nucleotideRadius: number
   ) {
     for (let x = 0; x < colsCount; x++) {
@@ -23,6 +24,7 @@ export default class Matrix {
         )
       }
     }
+    this.addCuts()
   }
 
   get p(): p5 {
@@ -35,11 +37,17 @@ export default class Matrix {
       if(nucleotide.isWall){
         nucleotide.generate()
         nucleotide.recursiveSwap(opposedNeighborIndex)
-        // const neighbors = nucleotide.getNeighbors(opposedNeighborIndex)
-        // nucleotide.matrixPosition.set(neighbors[neighbors.length-1].matrixPosition)
-        // for (const neighbor of neighbors)
-        //   neighbor.moveByNeighborIndex(neighborIndex)
       }
+    this.addCuts()
+  }
+
+  addCuts(){
+    while (this.nucleotides.filter(n => n.isCut).length < this.cutCount) {
+      let randomIndex
+      do { randomIndex = Math.floor(Math.random() * this.nucleotides.length) }
+      while (this.nucleotides[randomIndex].isCut)
+      this.nucleotides[randomIndex].isCut = true
+    }
   }
 
   update() {

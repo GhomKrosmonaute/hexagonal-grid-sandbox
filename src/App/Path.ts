@@ -5,23 +5,32 @@ import Nucleotide from './Nucleotide';
 
 export default class Path {
 
-  public nucleotides: Nucleotide[] = []
+  public items: Nucleotide[] = []
 
   constructor(
     public app: App,
     start: Nucleotide
   ) {
-    this.nucleotides.push(start)
+    this.items.push(start)
   }
 
   get length(): number {
     return this.nucleotides.length
   }
 
+  get nucleotides(): Nucleotide[] {
+    return this.items.filter(n => !n.isCut)
+  }
+
+  get cuts(): Nucleotide[] {
+    return this.items.filter(n => n.isCut)
+  }
+
   get isValidSequence(): boolean {
-    return (
-      this.app.sequence.join(',') === this.nucleotides.map( n => n.colorName ).join(',') ||
-      this.app.sequence.slice(0).reverse().join(',') === this.nucleotides.map( n => n.colorName ).join(',')
+    const signature = this.nucleotides.map(n => n.colorName).join(',')
+    return this.cuts.length >= 1 && (
+      signature === this.app.sequence.join(',') ||
+      signature === this.app.sequence.slice(0).reverse().join(',')
     )
   }
 
@@ -34,43 +43,43 @@ export default class Path {
   }
 
   get first(): Nucleotide | null {
-    return this.nucleotides[0]
+    return this.items[0]
   }
 
   update(nucleotide: Nucleotide): void {
 
     // in crunch path case
     if(this.app.state === "crunch"){
-      // check if the current nucleotide is a wall/hole
+      // check if the current nucleotide is a wall/hole/cut
       if(this.length > 0 && nucleotide.isWall) return
       if(this.first.isWall) return
     }
 
     // check the cancellation & cancel to previous nucleotide
     if(
-      this.nucleotides[this.nucleotides.length-2] &&
-      this.nucleotides[this.nucleotides.length-2] === nucleotide
+      this.items[this.items.length-2] &&
+      this.items[this.items.length-2] === nucleotide
     ) {
-      this.nucleotides.pop()
+      this.items.pop()
       return
     }
 
     // check if this path is terminated or not
-    if(this.nucleotides.length >= (
+    if(this.length >= (
       this.app.state === "crunch" ? this.maxLength : 2
     )) return
 
     // check if nucleotide is already in this path
-    if(this.nucleotides.includes(nucleotide)) return
+    if(this.items.includes(nucleotide)) return
 
     // check if the current nucleotide is a neighbor of the last checked nucleotide
     if(
-      this.nucleotides[this.nucleotides.length-1] &&
-      this.nucleotides[this.nucleotides.length-1].getNeighborIndex(nucleotide) === -1
+      this.items[this.items.length-1] &&
+      this.items[this.items.length-1].getNeighborIndex(nucleotide) === -1
     ) return null
 
     // push in this path the checked nucleotide
-    this.nucleotides.push(nucleotide)
+    this.items.push(nucleotide)
   }
 
   draw( debug:boolean = false ){
@@ -79,16 +88,27 @@ export default class Path {
       let color: number = this.isValidSequence ? 255 : 170
 
       // for all nucleotide in path
-      for(const nucleotide of this.nucleotides){
+      for(const nucleotide of this.items){
 
-        // draw ellipse
         this.p.noStroke()
         this.p.fill(color)
-        this.p.ellipse(
-          nucleotide.x,
-          nucleotide.y,
-          nucleotide.width * .5
-        )
+
+        if(nucleotide.isCut){
+          // draw ellipse
+          this.p.ellipse(
+            nucleotide.x,
+            nucleotide.y,
+            nucleotide.width * .8
+          )
+        }else{
+          // draw ellipse
+          this.p.ellipse(
+            nucleotide.x,
+            nucleotide.y,
+            nucleotide.width * .5
+          )
+        }
+
         if(last){
 
           // draw line
@@ -110,21 +130,22 @@ export default class Path {
   crunch(){
     if(this.isValidSequence){
       this.app.log("Validated Path", {
-        length: this.nucleotides.length,
+        length: this.length,
         // @ts-ignore
-        ...Object.fromEntries(this.nucleotides.map((n,i) => {
+        ...Object.fromEntries(this.items.filter(n => !n.isCut).map((n, i) => {
           return [String(i),n.toString()]
         }))
       })
-      this.nucleotides.forEach( n => {
+      this.items.forEach(n => {
         n.isWall = true
+        n.isCut = false
       })
       this.app.generateSequence()
     }else{
       this.app.log("Unvalidated Path", {
-        length: this.nucleotides.length,
+        length: this.length,
         // @ts-ignore
-        ...Object.fromEntries(this.nucleotides.map((n,i) => {
+        ...Object.fromEntries(this.items.filter(n => !n.isCut).map((n, i) => {
           return [String(i),n.toString()]
         }))
       })
@@ -132,9 +153,9 @@ export default class Path {
   }
 
   slide(){
-    if(!this.nucleotides[1]) return
+    if(!this.items[1]) return
 
-    const neighborIndex = this.nucleotides[0].getNeighborIndex(this.nucleotides[1])
+    const neighborIndex = this.items[0].getNeighborIndex(this.items[1])
 
     this.app.log("Slide", {
       direction: neighborIndex
