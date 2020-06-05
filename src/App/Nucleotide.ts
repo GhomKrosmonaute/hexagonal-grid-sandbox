@@ -4,7 +4,6 @@ import p5 from "p5";
 
 export default class Nucleotide {
 
-  public image: p5.Image
   public colorName: string
   public isWall: boolean
   public isCut: boolean
@@ -67,7 +66,6 @@ export default class Nucleotide {
     this.isWall = false
     const colorNames = this.matrix.app.colorNames
     this.colorName = colorNames[Math.floor(Math.random()*colorNames.length)]
-    this.image = this.matrix.app.images.nucleotides[this.colorName]
   }
 
   swap( nucleotide: Nucleotide ){
@@ -172,57 +170,36 @@ export default class Nucleotide {
     /* Mouse collision */
     const hovered = this.isHovered
 
-    if (!debug) {
-      // Draw image
-      this.p.push()
-      this.p.translate(
-        this.x - (this.width * 1.2) * .5,
-        this.y - (this.height * 1.2) * .5
-      )
-      if(hovered) this.p.tint(255)
-      else this.p.tint(200)
-      this.p.noStroke()
-      this.p.image(this.image,
-        0, 0,
-        this.width * 1.2,
-        this.height * 1.2
-      )
-      this.p.pop()
-    }
+    this.p.stroke(10)
+    this.p.strokeWeight(1)
 
-    else {
-
-      this.p.stroke(10)
-      this.p.strokeWeight(1)
-
-      if(this.isCut){
-        // Draw vectoriel cut
-        if(hovered) this.p.fill(this.p.color('#50514f'))
-        this.p.fill(this.p.color('#6e6f6e'))
-        this.p.ellipse(this.x,this.y,this.width * .6)
-      }else{
-        // Draw vectoriel nucleotide
-        if(hovered) this.color.setAlpha(255)
-        else this.color.setAlpha(150)
-        this.p.fill(this.color)
-        this.p.beginShape()
-        for (let i = 0; i < 6; i++){
-          const corner = this.getCornerPosition(i)
-          this.p.vertex(corner.x,corner.y)
-        }
-        this.p.endShape(this.p.CLOSE)
+    if(this.isCut){
+      // Draw vectoriel cut
+      if(hovered) this.p.fill(this.p.color('#50514f'))
+      this.p.fill(this.p.color('#6e6f6e'))
+      this.p.ellipse(this.x,this.y,this.width * .6)
+    }else{
+      // Draw vectoriel nucleotide
+      if(hovered) this.color.setAlpha(255)
+      else this.color.setAlpha(150)
+      this.p.fill(this.color)
+      this.p.beginShape()
+      for (let i = 0; i < 6; i++){
+        const corner = this.getCornerPosition(i)
+        this.p.vertex(corner.x,corner.y)
       }
-
-      // position text
-      this.p.stroke(0)
-      this.p.strokeWeight(3)
-      this.p.fill(255)
-      this.p.textSize(this.height * .2)
-      this.p.textAlign(this.p.CENTER)
-      this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
-        this.x, this.y + this.height * .41
-      )
+      this.p.endShape(this.p.CLOSE)
     }
+
+    // position text
+    this.p.stroke(0)
+    this.p.strokeWeight(3)
+    this.p.fill(255)
+    this.p.textSize(this.height * .2)
+    this.p.textAlign(this.p.CENTER)
+    this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
+      this.x, this.y + this.height * .41
+    )
 
   }
 

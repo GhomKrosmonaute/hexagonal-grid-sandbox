@@ -11,10 +11,10 @@ export default class App {
   public logIndex: number = 0
   public state: "crunch" | "slide" = "crunch"
   public sequence: string[]
+  public readonly colorNames: [string,string,string,string] = ['blue','red','green','yellow']
 
   constructor(
     public p:p5,
-    public images: any,
     colsCount: number,
     rowsCount: number,
     cutCount: number,
@@ -31,10 +31,6 @@ export default class App {
     )
     this.generateSequence()
     this.setupPanel()
-  }
-
-  get colorNames(): string[] {
-    return Object.keys(this.images.nucleotides)
   }
 
   getHovered(): Nucleotide | null {
@@ -120,18 +116,6 @@ export default class App {
         this.p.height - 25, 30
       )
     })
-
-    if(this.debug){
-      this.p.noStroke()
-      this.p.fill(0,170)
-      this.p.rect(0, 0,
-        this.p.width, 35
-      )
-      this.p.fill(255)
-      this.p.textSize(20)
-      this.p.textAlign(this.p.LEFT)
-      this.p.text('Framerate: ' + Math.round(this.p.frameRate()), 10, 25)
-    }
   }
 
   mousePressed(){
