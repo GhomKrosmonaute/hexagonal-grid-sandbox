@@ -133,7 +133,7 @@ export default class App {
   mouseReleased(){
     if(this.p.mouseButton === this.p.LEFT){
       if(this.path){
-        if(this.path.length === 1) {
+        if(this.path.items.length === 1) {
           const n = this.path.first
           n.isHole = !n.isHole
           this.log('Hole ' + (n.isHole ? 'placed' : 'removed'), {

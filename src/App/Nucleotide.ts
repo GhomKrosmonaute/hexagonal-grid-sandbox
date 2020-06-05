@@ -191,16 +191,17 @@ export default class Nucleotide {
       this.p.endShape(this.p.CLOSE)
     }
 
-    // position text
-    this.p.stroke(0)
-    this.p.strokeWeight(3)
-    this.p.fill(255)
-    this.p.textSize(this.height * .2)
-    this.p.textAlign(this.p.CENTER)
-    this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
-      this.x, this.y + this.height * .41
-    )
-
+    if(this.matrix.app.debug){
+      // position text
+      this.p.stroke(0)
+      this.p.strokeWeight(3)
+      this.p.fill(255)
+      this.p.textSize(this.height * .2)
+      this.p.textAlign(this.p.CENTER)
+      this.p.text(`x${this.matrixPosition.x} y${this.matrixPosition.y}`,
+        this.x, this.y + this.height * .41
+      )
+    }
   }
 
   toString(): string {

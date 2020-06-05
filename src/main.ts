@@ -29,7 +29,7 @@ function sketch( p:P5 ){
       /* path max length */
         5,
       /* debug ? */
-        true
+        false
     )
   }
 
