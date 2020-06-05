@@ -34,7 +34,7 @@ export default class Matrix {
   slide( neighborIndex: number ){
     const opposedNeighborIndex = this.app.opposedIndexOf(neighborIndex)
     for (const nucleotide of this.nucleotides)
-      if(nucleotide.isWall){
+      if(nucleotide.isHole){
         nucleotide.generate()
         nucleotide.recursiveSwap(opposedNeighborIndex)
       }

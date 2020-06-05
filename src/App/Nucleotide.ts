@@ -5,7 +5,7 @@ import p5 from "p5";
 export default class Nucleotide {
 
   public colorName: string
-  public isWall: boolean
+  public isHole: boolean
   public isCut: boolean
 
   constructor(
@@ -63,7 +63,7 @@ export default class Nucleotide {
   }
 
   generate() {
-    this.isWall = false
+    this.isHole = false
     const colorNames = this.matrix.app.colorNames
     this.colorName = colorNames[Math.floor(Math.random()*colorNames.length)]
   }
@@ -165,7 +165,7 @@ export default class Nucleotide {
   }
 
   draw( debug:boolean = false ) {
-    if(this.isWall) return
+    if(this.isHole) return
 
     /* Mouse collision */
     const hovered = this.isHovered

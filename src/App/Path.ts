@@ -51,8 +51,8 @@ export default class Path {
     // in crunch path case
     if(this.app.state === "crunch"){
       // check if the current nucleotide is a wall/hole/cut
-      if(this.length > 0 && nucleotide.isWall) return
-      if(this.first.isWall) return
+      if(this.length > 0 && nucleotide.isHole) return
+      if(this.first.isHole) return
     }
 
     // check the cancellation & cancel to previous nucleotide
@@ -137,7 +137,7 @@ export default class Path {
         }))
       })
       this.items.forEach(n => {
-        n.isWall = true
+        n.isHole = true
         n.isCut = false
       })
       this.app.generateSequence()

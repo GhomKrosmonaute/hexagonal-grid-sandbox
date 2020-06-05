@@ -128,7 +128,6 @@ export default class App {
         this.path = new Path(this, hovered)
       }
     }
-
   }
 
   mouseReleased(){
@@ -136,8 +135,8 @@ export default class App {
       if(this.path){
         if(this.path.length === 1) {
           const n = this.path.first
-          n.isWall = !n.isWall
-          this.log('Hole/Wall ' + (n.isWall ? 'placed' : 'removed'), {
+          n.isHole = !n.isHole
+          this.log('Hole ' + (n.isHole ? 'placed' : 'removed'), {
             position: n.toString()
           })
           this.path = null
