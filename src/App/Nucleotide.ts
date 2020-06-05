@@ -62,6 +62,12 @@ export default class Nucleotide {
     ) < this.radius * 0.86
   }
 
+  getAlpha( alpha: number ): p5.Color {
+    const color = this.color
+    color.setAlpha(alpha)
+    return color
+  }
+
   generate() {
     this.isHole = false
     const colorNames = this.matrix.app.colorNames
@@ -175,14 +181,12 @@ export default class Nucleotide {
 
     if(this.isCut){
       // Draw vectoriel cut
-      if(hovered) this.p.fill(this.p.color('#50514f'))
-      this.p.fill(this.p.color('#6e6f6e'))
+      if(hovered) this.p.fill(this.p.color('#6e6f6e'))
+      else this.p.fill(this.p.color('#50514f'))
       this.p.ellipse(this.x,this.y,this.width * .6)
     }else{
       // Draw vectoriel nucleotide
-      if(hovered) this.color.setAlpha(255)
-      else this.color.setAlpha(150)
-      this.p.fill(this.color)
+      this.p.fill(hovered ? this.getAlpha(255) : this.getAlpha(230))
       this.p.beginShape()
       for (let i = 0; i < 6; i++){
         const corner = this.getCornerPosition(i)
