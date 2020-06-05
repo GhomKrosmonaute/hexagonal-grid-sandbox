@@ -197,8 +197,8 @@ export default class Nucleotide {
 
       if(this.isCut){
         // Draw vectoriel cut
-        if(hovered) this.p.fill(255)
-        this.p.fill(180)
+        if(hovered) this.p.fill(this.p.color('#50514f'))
+        this.p.fill(this.p.color('#6e6f6e'))
         this.p.ellipse(this.x,this.y,this.width * .6)
       }else{
         // Draw vectoriel nucleotide

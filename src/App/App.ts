@@ -51,10 +51,10 @@ export default class App {
 
   getColor( name: string ): p5.Color {
     switch (name) {
-      case 'blue': return this.p.color(0,0,255)
-      case 'red': return this.p.color(255,0,0)
-      case 'yellow': return this.p.color(255,255,0)
-      case 'green': return this.p.color(0,255,0)
+      case 'blue': return this.p.color('#247ba0')
+      case 'red': return this.p.color('#f25f5c')
+      case 'yellow': return this.p.color('#ffe066')
+      case 'green': return this.p.color('#70c1b3')
     }
   }
 

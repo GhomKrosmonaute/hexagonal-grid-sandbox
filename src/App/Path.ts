@@ -85,7 +85,7 @@ export default class Path {
   draw( debug:boolean = false ){
     if(debug || true){
       let last: Nucleotide = null
-      let color: number = this.isValidSequence ? 255 : 170
+      let color: p5.Color = this.isValidSequence ? this.p.color(255) : this.p.color('#50514f')
 
       // for all nucleotide in path
       for(const nucleotide of this.items){
@@ -98,7 +98,7 @@ export default class Path {
           this.p.ellipse(
             nucleotide.x,
             nucleotide.y,
-            nucleotide.width * .8
+            nucleotide.width * .6
           )
         }else{
           // draw ellipse
@@ -112,7 +112,7 @@ export default class Path {
         if(last){
 
           // draw line
-          this.p.strokeWeight(3)
+          this.p.strokeWeight(10)
           this.p.stroke(color)
           this.p.line(
             last.x,

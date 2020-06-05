@@ -34,7 +34,7 @@ function sketch( p:P5 ){
   p.setup = () => {
     for(const name in images.nucleotides)
       images.nucleotides[name].resize( 75, 75 )
-    p.createCanvas( 480, 480 )
+    p.createCanvas( 600,600)
     //@ts-ignore
     window.app = new App(p,
       /* images */
@@ -55,7 +55,7 @@ function sketch( p:P5 ){
   }
 
   p.draw = () => {
-    p.background(30)
+    p.background(0)
     //@ts-ignore
     window.app.update()
     //@ts-ignore
